@@ -1,0 +1,98 @@
+package com.simats.orcare.ui.screens
+
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material.icons.automirrored.rounded.Chat
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import com.simats.orcare.ui.theme.*
+import com.simats.orcare.ui.components.*
+import androidx.compose.foundation.clickable
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.res.painterResource
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ToothDecayScreen(navController: NavController) {
+    Scaffold(
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = { Text("Tooth Decay", style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold, color = TextPrimary)) },
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(Icons.AutoMirrored.Rounded.ArrowBack, contentDescription = "Back", tint = TextPrimary)
+                    }
+                },
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = SurfaceWhite)
+            )
+        },
+
+        containerColor = SurfaceWhite
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier.fillMaxSize().padding(paddingValues).verticalScroll(rememberScrollState()).padding(horizontal = 24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Spacer(modifier = Modifier.height(24.dp))
+            Surface(modifier = Modifier.size(120.dp), shape = CircleShape, color = Color(0xFFFEF3C7)) {
+                Box(contentAlignment = Alignment.Center) { Text("🕳️", fontSize = 60.sp) }
+            }
+            Spacer(modifier = Modifier.height(32.dp))
+            HardenedSymptomCard(title = "Possible Reason", content = "Tooth decay (cavities) is caused by plaque bacteria converting sugar into acid that eats away enamel.")
+            Spacer(modifier = Modifier.height(16.dp))
+            HardenedSymptomCard(title = "Do This at Home") {
+                Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                    HardenedStepItem(1, "Brush meticulously with fluoride toothpaste")
+                    HardenedStepItem(2, "Rinse with fluoride mouthwash")
+                    HardenedStepItem(3, "Use interdental brushes for cleaning")
+                    HardenedStepItem(4, "Keep the area clean to prevent rapid progression")
+                }
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            HardenedSymptomCard(title = "Avoid These Foods") {
+                Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                    HardenedFoodChip("Sugary snacks and candies")
+                    HardenedFoodChip("Sweetened carbonated drinks")
+                    HardenedFoodChip("Sticky foods like caramel")
+                    HardenedFoodChip("Frequent snacking")
+                }
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            Card(modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(20.dp), colors = CardDefaults.cardColors(containerColor = Color(0xFFFEE2E2)), border = BorderStroke(1.dp, Color(0xFFFECACA))) {
+                Text("Cavities do not heal on their own. They require professional filling to prevent abscess or tooth loss.", modifier = Modifier.padding(20.dp), style = MaterialTheme.typography.bodyMedium.copy(color = Color(0xFFEF4444), fontWeight = FontWeight.Bold, lineHeight = 22.sp), textAlign = TextAlign.Center)
+            }
+            // Ask AI Button (Moved from Bottom Bar)
+            Box(modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp)) {
+                Button(
+                    onClick = { navController.navigate("chatbot/Tooth Decay") },
+                    modifier = Modifier.fillMaxWidth().height(56.dp),
+                    shape = RoundedCornerShape(16.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2563EB))
+                ) {
+                    Icon(Icons.AutoMirrored.Rounded.Chat, contentDescription = null, modifier = Modifier.size(20.dp))
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Text("Ask AI about this symptom", fontWeight = FontWeight.Bold)
+                }
+            }
+            Spacer(modifier = Modifier.height(40.dp))
+        }
+    }
+}
