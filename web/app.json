@@ -1,0 +1,17 @@
+{
+  "expo": {
+    "name": "ORCare Web",
+    "slug": "orcare-web",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "platforms": ["web"],
+    "web": {
+      "bundler": "metro"
+    },
+    "extra": {
+      "apiBaseUrl": "http://localhost:3000",
+      "geminiApiKey": ""
+    }
+  }
+}
