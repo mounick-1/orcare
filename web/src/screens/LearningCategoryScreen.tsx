@@ -27,7 +27,7 @@ export default function LearningCategoryScreen({ navigation, route }: Props) {
 
   return (
     <View style={styles.container}>
-      {/* Hero Header */}
+      {/* Colored Hero */}
       <View style={[styles.hero, { backgroundColor: category.bgColor }]}>
         <TouchableOpacity
           style={[styles.backBtn, { backgroundColor: category.color + '20' }]}
@@ -37,13 +37,13 @@ export default function LearningCategoryScreen({ navigation, route }: Props) {
         </TouchableOpacity>
 
         <View style={styles.heroContent}>
-          <View style={[styles.heroIconBox, { backgroundColor: category.color + '25' }]}>
+          <View style={[styles.heroIconBox, { backgroundColor: category.color + '30' }]}>
             <Text style={styles.heroEmoji}>{category.icon}</Text>
           </View>
-          <View style={styles.heroText}>
+          <View style={styles.heroMeta}>
             <View style={[styles.tagPill, { backgroundColor: category.color + '20' }]}>
               <Text style={[styles.tagText, { color: category.color }]}>
-                {category.modules.length} modules
+                {category.modules.length} Modules
               </Text>
             </View>
             <Text style={[styles.heroTitle, { color: category.color }]}>{category.title}</Text>
@@ -58,47 +58,50 @@ export default function LearningCategoryScreen({ navigation, route }: Props) {
         contentContainerStyle={styles.list}
         showsVerticalScrollIndicator={false}
         ListHeaderComponent={
-          <Text style={styles.listHeader}>All Modules</Text>
+          <Text style={styles.listLabel}>All Modules</Text>
         }
         renderItem={({ item, index }) => (
           <TouchableOpacity
-            style={styles.moduleCard}
+            style={[styles.card, { borderColor: category.color + '25' }]}
             onPress={() => navigation.navigate('ModuleDetail', { moduleId: item.id, categoryId: category.id })}
             activeOpacity={0.85}
           >
-            <View style={[styles.indexBadge, { backgroundColor: category.bgColor }]}>
-              <Text style={[styles.indexText, { color: category.color }]}>{index + 1}</Text>
-            </View>
-
-            <View style={styles.moduleContent}>
-              <View style={styles.moduleTop}>
-                <View style={[styles.moduleIconBox, { backgroundColor: category.bgColor }]}>
+            {/* Module number + icon row */}
+            <View style={styles.cardTop}>
+              <View style={[styles.numberCircle, { backgroundColor: category.bgColor }]}>
+                <Text style={[styles.numberText, { color: category.color }]}>{index + 1}</Text>
+              </View>
+              <View style={styles.cardTopRight}>
+                <View style={[styles.iconPill, { backgroundColor: category.bgColor }]}>
                   <Text style={styles.moduleEmoji}>{item.icon}</Text>
+                  <Text style={[styles.iconPillText, { color: category.color }]}>{item.title}</Text>
                 </View>
                 <View style={[styles.pointsBadge, { backgroundColor: Colors.amberLight }]}>
                   <Text style={[styles.pointsText, { color: Colors.amber }]}>⭐ {item.points} pts</Text>
                 </View>
               </View>
-
-              <Text style={styles.moduleTitle}>{item.title}</Text>
-              <Text style={styles.moduleDesc} numberOfLines={2}>{item.description}</Text>
-
-              <View style={styles.moduleMeta}>
-                <View style={styles.metaItem}>
-                  <Text style={styles.metaIcon}>📖</Text>
-                  <Text style={styles.metaText}>{item.lessons.length} lessons</Text>
-                </View>
-                <View style={styles.metaDot} />
-                <View style={styles.metaItem}>
-                  <Text style={styles.metaIcon}>❓</Text>
-                  <Text style={styles.metaText}>{item.quiz.length} quiz</Text>
-                </View>
-              </View>
             </View>
 
-            <Text style={[styles.cardArrow, { color: category.color }]}>›</Text>
+            {/* Description */}
+            <Text style={styles.moduleDesc} numberOfLines={2}>{item.description}</Text>
+
+            {/* Meta row: lessons + quiz */}
+            <View style={styles.metaRow}>
+              <View style={[styles.metaBadge, { backgroundColor: category.bgColor }]}>
+                <Text style={styles.metaEmoji}>📖</Text>
+                <Text style={[styles.metaText, { color: category.color }]}>{item.lessons.length} Lessons</Text>
+              </View>
+              <View style={[styles.metaBadge, { backgroundColor: Colors.primaryLight }]}>
+                <Text style={styles.metaEmoji}>🧠</Text>
+                <Text style={[styles.metaText, { color: Colors.primary }]}>{item.quiz.length} Quiz Q's</Text>
+              </View>
+              <View style={styles.startBtn}>
+                <Text style={[styles.startBtnText, { color: category.color }]}>Start →</Text>
+              </View>
+            </View>
           </TouchableOpacity>
         )}
+        ListFooterComponent={<View style={{ height: 24 }} />}
       />
     </View>
   );
@@ -122,29 +125,30 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
   },
   backArrow: { fontSize: 18, fontWeight: '700' },
+
   heroContent: { flexDirection: 'row', alignItems: 'flex-start', gap: 16 },
   heroIconBox: {
-    width: 68,
-    height: 68,
-    borderRadius: 20,
+    width: 72,
+    height: 72,
+    borderRadius: 22,
     alignItems: 'center',
     justifyContent: 'center',
     flexShrink: 0,
   },
-  heroEmoji: { fontSize: 34 },
-  heroText: { flex: 1, gap: 6 },
+  heroEmoji: { fontSize: 36 },
+  heroMeta: { flex: 1, gap: 6 },
   tagPill: {
     alignSelf: 'flex-start',
     borderRadius: 20,
     paddingHorizontal: 10,
-    paddingVertical: 3,
+    paddingVertical: 4,
   },
-  tagText: { fontSize: 11, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.5 },
-  heroTitle: { fontSize: 20, fontWeight: '800', lineHeight: 26 },
+  tagText: { fontSize: 11, fontWeight: '800', textTransform: 'uppercase', letterSpacing: 0.6 },
+  heroTitle: { fontSize: 21, fontWeight: '900', lineHeight: 26 },
   heroDesc: { fontSize: 12, color: Colors.textSecondary, lineHeight: 18 },
 
   list: { padding: 16, gap: 12 },
-  listHeader: {
+  listLabel: {
     fontSize: 11,
     fontWeight: '800',
     color: Colors.textMuted,
@@ -153,58 +157,88 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
 
-  moduleCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  card: {
     backgroundColor: Colors.surface,
     borderRadius: 18,
     padding: 16,
-    gap: 14,
+    gap: 12,
     borderWidth: 1,
-    borderColor: Colors.border,
     shadowColor: Colors.shadowNeutral,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 1,
-    shadowRadius: 6,
+    shadowRadius: 8,
     elevation: 2,
   },
-  indexBadge: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+
+  cardTop: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 12,
+  },
+  numberCircle: {
+    width: 34,
+    height: 34,
+    borderRadius: 17,
     alignItems: 'center',
     justifyContent: 'center',
     flexShrink: 0,
+    marginTop: 2,
   },
-  indexText: { fontWeight: '800', fontSize: 15 },
+  numberText: { fontSize: 14, fontWeight: '900' },
 
-  moduleContent: { flex: 1, gap: 6 },
-  moduleTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  moduleIconBox: {
-    width: 32,
-    height: 32,
-    borderRadius: 10,
+  cardTopRight: {
+    flex: 1,
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    flexWrap: 'wrap',
+    gap: 8,
   },
-  moduleEmoji: { fontSize: 16 },
+  iconPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    borderRadius: 20,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    flexShrink: 1,
+  },
+  moduleEmoji: { fontSize: 14 },
+  iconPillText: { fontSize: 13, fontWeight: '700', flexShrink: 1 },
+
   pointsBadge: {
     borderRadius: 20,
     paddingHorizontal: 8,
-    paddingVertical: 3,
+    paddingVertical: 4,
+    flexShrink: 0,
   },
   pointsText: { fontSize: 11, fontWeight: '700' },
 
-  moduleTitle: { fontSize: 14, fontWeight: '700', color: Colors.textPrimary },
-  moduleDesc: { fontSize: 12, color: Colors.textSecondary, lineHeight: 17 },
+  moduleDesc: { fontSize: 12, color: Colors.textSecondary, lineHeight: 18 },
 
-  moduleMeta: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 2 },
-  metaItem: { flexDirection: 'row', alignItems: 'center', gap: 4 },
-  metaIcon: { fontSize: 12 },
-  metaText: { fontSize: 11, color: Colors.textMuted, fontWeight: '500' },
-  metaDot: { width: 3, height: 3, borderRadius: 1.5, backgroundColor: Colors.textMuted },
+  metaRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  metaBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    borderRadius: 20,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+  },
+  metaEmoji: { fontSize: 11 },
+  metaText: { fontSize: 11, fontWeight: '700' },
 
-  cardArrow: { fontSize: 26, fontWeight: '300', flexShrink: 0 },
+  startBtn: {
+    marginLeft: 'auto' as any,
+    paddingHorizontal: 12,
+    paddingVertical: 5,
+    borderRadius: 20,
+    backgroundColor: Colors.border,
+  },
+  startBtnText: { fontSize: 12, fontWeight: '800' },
 
   emptyState: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 16 },
   emptyEmoji: { fontSize: 56 },

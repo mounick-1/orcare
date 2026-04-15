@@ -151,7 +151,7 @@ const styles = StyleSheet.create({
     height: 52,
     borderRadius: 26,
     borderWidth: 2,
-    borderColor: Colors.primaryLight,
+    borderColor: Colors.primary + '60',
     padding: 2,
   },
   avatar: {

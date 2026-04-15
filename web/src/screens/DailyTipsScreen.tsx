@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/AppNavigator';
 import { Colors } from '../theme/colors';
-import { tipsList, tipCategories, getDailyTip } from '../data/tipData';
+import { tipsList, tipCategories, getDailyTip, Tip } from '../data/tipData';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'DailyTips'>;
 
@@ -15,15 +15,46 @@ const categoryColors: Record<string, { bg: string; text: string }> = {
   'Myth Busting': { bg: Colors.errorLight, text: Colors.error },
   'Age 7-9': { bg: Colors.violetLight, text: Colors.violet },
 };
-// Fix dark-theme backgrounds for tip cards
-const getDarkBg = (color: string) => color + '1A';
+
+const categoryIcons: Record<string, string> = {
+  All: '📋',
+  Hygiene: '🪥',
+  Food: '🥗',
+  Lifestyle: '🌿',
+  'Myth Busting': '💥',
+  'Age 7-9': '👧',
+};
+
+type ListItem =
+  | { type: 'header'; category: string }
+  | { type: 'tip'; tip: Tip };
 
 export default function DailyTipsScreen({ navigation }: Props) {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const dailyTip = getDailyTip();
 
-  const filtered =
-    selectedCategory === 'All' ? tipsList : tipsList.filter((t) => t.category === selectedCategory);
+  const listData = useMemo<ListItem[]>(() => {
+    if (selectedCategory !== 'All') {
+      return tipsList
+        .filter((t) => t.category === selectedCategory)
+        .map((tip) => ({ type: 'tip' as const, tip }));
+    }
+    const cats = tipCategories.filter((c) => c !== 'All');
+    const items: ListItem[] = [];
+    for (const cat of cats) {
+      const tips = tipsList.filter((t) => t.category === cat);
+      if (tips.length > 0) {
+        items.push({ type: 'header' as const, category: cat });
+        items.push(...tips.map((tip) => ({ type: 'tip' as const, tip })));
+      }
+    }
+    return items;
+  }, [selectedCategory]);
+
+  const filteredCount = useMemo(
+    () => selectedCategory === 'All' ? tipsList.length : tipsList.filter((t) => t.category === selectedCategory).length,
+    [selectedCategory]
+  );
 
   return (
     <View style={styles.container}>
@@ -42,8 +73,10 @@ export default function DailyTipsScreen({ navigation }: Props) {
       </View>
 
       <FlatList
-        data={filtered}
-        keyExtractor={(item) => item.id.toString()}
+        data={listData}
+        keyExtractor={(item) =>
+          item.type === 'header' ? `header-${item.category}` : `tip-${item.tip.id}`
+        }
         contentContainerStyle={styles.list}
         showsVerticalScrollIndicator={false}
         ListHeaderComponent={
@@ -52,14 +85,18 @@ export default function DailyTipsScreen({ navigation }: Props) {
             <View style={styles.dailyCard}>
               <View style={styles.dailyTop}>
                 <View style={styles.dailyBadge}>
+                  <Text style={styles.dailyBadgeIcon}>💡</Text>
                   <Text style={styles.dailyBadgeText}>TODAY'S TIP</Text>
                 </View>
                 <Text style={styles.dailyEmoji}>{dailyTip.icon}</Text>
               </View>
               <Text style={styles.dailyTitle}>{dailyTip.title}</Text>
               <Text style={styles.dailyDesc}>{dailyTip.description}</Text>
-              <View style={styles.dailyCategoryTag}>
-                <Text style={styles.dailyCategoryText}>{dailyTip.category}</Text>
+              <View style={styles.dailyCategoryRow}>
+                <Text style={styles.dailyCategoryIcon}>{categoryIcons[dailyTip.category]}</Text>
+                <View style={styles.dailyCategoryTag}>
+                  <Text style={styles.dailyCategoryText}>{dailyTip.category}</Text>
+                </View>
               </View>
             </View>
 
@@ -76,17 +113,12 @@ export default function DailyTipsScreen({ navigation }: Props) {
                 const isActive = selectedCategory === item;
                 return (
                   <TouchableOpacity
-                    style={[
-                      styles.filterChip,
-                      { backgroundColor: isActive ? colors.text : colors.bg },
-                    ]}
+                    style={[styles.filterChip, { backgroundColor: isActive ? colors.text : colors.bg }]}
                     onPress={() => setSelectedCategory(item)}
                     activeOpacity={0.8}
                   >
-                    <Text style={[
-                      styles.filterChipText,
-                      { color: isActive ? Colors.textInverse : colors.text }
-                    ]}>
+                    <Text style={styles.filterChipIcon}>{categoryIcons[item]}</Text>
+                    <Text style={[styles.filterChipText, { color: isActive ? Colors.textInverse : colors.text }]}>
                       {item}
                     </Text>
                   </TouchableOpacity>
@@ -94,31 +126,56 @@ export default function DailyTipsScreen({ navigation }: Props) {
               }}
             />
 
-            <Text style={styles.sectionTitle}>
-              {selectedCategory === 'All' ? 'All Tips' : selectedCategory}
-              <Text style={styles.sectionCount}> ({filtered.length})</Text>
-            </Text>
+            {/* Section subheading for filtered view */}
+            {selectedCategory !== 'All' && (() => {
+              const colors = categoryColors[selectedCategory] ?? { bg: Colors.primaryLight, text: Colors.primary };
+              return (
+                <View style={[styles.subHeading, { borderLeftColor: colors.text, backgroundColor: colors.bg }]}>
+                  <Text style={styles.subHeadingIcon}>{categoryIcons[selectedCategory]}</Text>
+                  <Text style={[styles.subHeadingLabel, { color: colors.text }]}>{selectedCategory}</Text>
+                  <View style={[styles.subHeadingBadge, { backgroundColor: colors.text + '20' }]}>
+                    <Text style={[styles.subHeadingCount, { color: colors.text }]}>{filteredCount} tips</Text>
+                  </View>
+                </View>
+              );
+            })()}
           </View>
         }
         renderItem={({ item }) => {
-          const colors = categoryColors[item.category] ?? { bg: Colors.primaryLight, text: Colors.primary };
+          if (item.type === 'header') {
+            const colors = categoryColors[item.category] ?? { bg: Colors.primaryLight, text: Colors.primary };
+            const count = tipsList.filter((t) => t.category === item.category).length;
+            return (
+              <View style={[styles.groupHeader, { borderLeftColor: colors.text, backgroundColor: colors.bg }]}>
+                <Text style={styles.groupHeaderIcon}>{categoryIcons[item.category]}</Text>
+                <Text style={[styles.groupHeaderText, { color: colors.text }]}>{item.category}</Text>
+                <View style={[styles.groupCount, { backgroundColor: colors.text + '20' }]}>
+                  <Text style={[styles.groupCountText, { color: colors.text }]}>{count}</Text>
+                </View>
+              </View>
+            );
+          }
+
+          const tip = item.tip;
+          const colors = categoryColors[tip.category] ?? { bg: Colors.primaryLight, text: Colors.primary };
           return (
             <View style={styles.tipCard}>
               <View style={[styles.tipIconBox, { backgroundColor: colors.bg }]}>
-                <Text style={styles.tipEmoji}>{item.icon}</Text>
+                <Text style={styles.tipEmoji}>{tip.icon}</Text>
               </View>
               <View style={styles.tipContent}>
                 <View style={styles.tipTop}>
-                  <Text style={styles.tipTitle} numberOfLines={2}>{item.title}</Text>
+                  <Text style={styles.tipTitle} numberOfLines={2}>{tip.title}</Text>
                   <View style={[styles.categoryBadge, { backgroundColor: colors.bg }]}>
-                    <Text style={[styles.categoryText, { color: colors.text }]}>{item.category}</Text>
+                    <Text style={[styles.categoryText, { color: colors.text }]}>{tip.category}</Text>
                   </View>
                 </View>
-                <Text style={styles.tipDesc} numberOfLines={2}>{item.description}</Text>
+                <Text style={styles.tipDesc} numberOfLines={2}>{tip.description}</Text>
               </View>
             </View>
           );
         }}
+        ListFooterComponent={<View style={{ height: 24 }} />}
       />
     </View>
   );
@@ -174,20 +231,21 @@ const styles = StyleSheet.create({
   },
   dailyTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   dailyBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
     backgroundColor: 'rgba(255,255,255,0.2)',
     borderRadius: 20,
     paddingHorizontal: 10,
     paddingVertical: 4,
   },
-  dailyBadgeText: {
-    color: Colors.textInverse,
-    fontSize: 10,
-    fontWeight: '800',
-    letterSpacing: 1,
-  },
+  dailyBadgeIcon: { fontSize: 12 },
+  dailyBadgeText: { color: Colors.textInverse, fontSize: 10, fontWeight: '800', letterSpacing: 1 },
   dailyEmoji: { fontSize: 32 },
   dailyTitle: { fontSize: 17, fontWeight: '800', color: Colors.textInverse, lineHeight: 24 },
   dailyDesc: { fontSize: 13, color: 'rgba(255,255,255,0.85)', lineHeight: 20 },
+  dailyCategoryRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  dailyCategoryIcon: { fontSize: 16 },
   dailyCategoryTag: {
     alignSelf: 'flex-start',
     backgroundColor: 'rgba(255,255,255,0.15)',
@@ -200,19 +258,45 @@ const styles = StyleSheet.create({
   filterScroll: { marginHorizontal: -4 },
   filterList: { gap: 8, paddingHorizontal: 4 },
   filterChip: {
-    paddingHorizontal: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 14,
     paddingVertical: 8,
     borderRadius: 20,
   },
+  filterChipIcon: { fontSize: 14 },
   filterChipText: { fontSize: 13, fontWeight: '700' },
 
-  sectionTitle: {
-    fontSize: 14,
-    fontWeight: '800',
-    color: Colors.textPrimary,
+  subHeading: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    borderRadius: 12,
+    borderLeftWidth: 3,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+  },
+  subHeadingIcon: { fontSize: 18 },
+  subHeadingLabel: { fontSize: 14, fontWeight: '800', flex: 1 },
+  subHeadingBadge: { borderRadius: 20, paddingHorizontal: 10, paddingVertical: 3 },
+  subHeadingCount: { fontSize: 11, fontWeight: '700' },
+
+  groupHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    borderRadius: 12,
+    borderLeftWidth: 3,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    marginHorizontal: 16,
     marginTop: 4,
   },
-  sectionCount: { color: Colors.textMuted, fontWeight: '400' },
+  groupHeaderIcon: { fontSize: 18 },
+  groupHeaderText: { fontSize: 13, fontWeight: '800', flex: 1, textTransform: 'uppercase', letterSpacing: 0.5 },
+  groupCount: { borderRadius: 20, paddingHorizontal: 10, paddingVertical: 3 },
+  groupCountText: { fontSize: 11, fontWeight: '800' },
 
   tipCard: {
     flexDirection: 'row',
@@ -242,12 +326,7 @@ const styles = StyleSheet.create({
   tipContent: { flex: 1, gap: 6 },
   tipTop: { flexDirection: 'row', alignItems: 'flex-start', gap: 8 },
   tipTitle: { fontSize: 13, fontWeight: '700', color: Colors.textPrimary, flex: 1, lineHeight: 18 },
-  categoryBadge: {
-    borderRadius: 20,
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    flexShrink: 0,
-  },
+  categoryBadge: { borderRadius: 20, paddingHorizontal: 8, paddingVertical: 3, flexShrink: 0 },
   categoryText: { fontSize: 10, fontWeight: '700' },
   tipDesc: { fontSize: 12, color: Colors.textSecondary, lineHeight: 17 },
 });

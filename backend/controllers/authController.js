@@ -382,6 +382,110 @@ const generateToken = (id) => {
 };
 
 
+// @desc  Request OTP to delete account (verifies email + password first)
+const requestDeleteAccountOtp = async (req, res) => {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+        return res.status(400).json({ message: 'Email and password are required' });
+    }
+
+    try {
+        const user = await User.findOne({ email });
+
+        if (!user) {
+            return res.status(401).json({ message: 'Invalid credentials' });
+        }
+
+        const match = await user.matchPassword(password);
+        if (!match) {
+            return res.status(401).json({ message: 'Invalid credentials' });
+        }
+
+        const otp = generateOTP();
+        user.emailOtp = otp;
+        user.otpExpires = new Date(Date.now() + 10 * 60 * 1000);
+        await user.save();
+
+        const subject = 'ORCare Account Deletion Verification';
+        const htmlContent = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <style>
+                .container { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: auto; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; }
+                .header { background-color: #1E293B; padding: 40px; text-align: center; }
+                .content { padding: 40px; text-align: center; background-color: #ffffff; }
+                .otp-box { background-color: #fef2f2; padding: 20px; border-radius: 12px; margin: 30px 0; font-size: 36px; font-weight: 800; letter-spacing: 12px; color: #ef4444; border: 2px dashed #fca5a5; }
+                .footer { background-color: #f8fafc; padding: 24px; text-align: center; font-size: 13px; color: #64748b; border-top: 1px solid #e2e8f0; }
+                .brand-name { color: #ffffff; font-weight: 700; font-size: 24px; letter-spacing: 1px; }
+                h1 { color: #ef4444; font-size: 28px; margin-bottom: 16px; font-weight: 700; }
+                p { color: #475569; line-height: 1.8; font-size: 16px; margin-bottom: 16px; }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="header"><div class="brand-name">ORCare</div></div>
+                <div class="content">
+                    <h1>⚠️ Account Deletion Request</h1>
+                    <p>We received a request to permanently delete your ORCare account.</p>
+                    <p>Use this code to confirm. <strong>This action cannot be undone.</strong></p>
+                    <div class="otp-box">${otp}</div>
+                    <p>This code expires in <strong>10 minutes</strong>. If you did not request this, change your password immediately.</p>
+                </div>
+                <div class="footer">&copy; ${new Date().getFullYear()} ORCare. All rights reserved.</div>
+            </div>
+        </body>
+        </html>`;
+
+        await sendMail({
+            to: email,
+            subject,
+            text: `Your ORCare account deletion OTP is: ${otp}. It expires in 10 minutes.`,
+            html: htmlContent
+        });
+
+        console.log(`[DELETE OTP] OTP sent to ${email}: ${otp}`);
+
+        res.json({ success: true, message: 'Verification code sent to your email' });
+    } catch (error) {
+        console.error('[DELETE OTP] Error:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+};
+
+// @desc  Confirm account deletion with OTP
+const confirmDeleteAccount = async (req, res) => {
+    const { email, otp } = req.body;
+
+    if (!email || !otp) {
+        return res.status(400).json({ message: 'Email and OTP are required' });
+    }
+
+    try {
+        const user = await User.findOne({ email });
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        if (user.emailOtp !== otp) {
+            return res.status(400).json({ message: 'Invalid OTP' });
+        }
+
+        if (new Date() > user.otpExpires) {
+            return res.status(400).json({ message: 'OTP has expired' });
+        }
+
+        await user.deleteOne();
+
+        res.json({ success: true, message: 'Account permanently deleted' });
+    } catch (error) {
+        console.error('[DELETE CONFIRM] Error:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+};
+
 module.exports = {
 
     registerUser,
@@ -394,5 +498,9 @@ module.exports = {
 
     forgotPassword,
 
-    resetPassword
+    resetPassword,
+
+    requestDeleteAccountOtp,
+
+    confirmDeleteAccount
 };

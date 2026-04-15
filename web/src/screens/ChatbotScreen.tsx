@@ -193,7 +193,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  headerLogoStar: { fontSize: 18, color: '#FFFFFF', fontWeight: '300' },
+  headerLogoStar: { fontSize: 18, color: Colors.textInverse, fontWeight: '300' },
 
   aiInfo: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 12 },
   aiAvatarBox: {
@@ -205,7 +205,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     position: 'relative',
   },
-  aiAvatarStar: { fontSize: 18, color: '#FFFFFF', fontWeight: '300' },
+  aiAvatarStar: { fontSize: 18, color: Colors.textInverse, fontWeight: '300' },
   onlineDot: {
     position: 'absolute',
     bottom: 1,
@@ -228,7 +228,7 @@ const styles = StyleSheet.create({
     marginBottom: 2,
     flexShrink: 0,
   },
-  aiBubbleAvatarStar: { fontSize: 14, color: '#FFFFFF', fontWeight: '300' },
+  aiBubbleAvatarStar: { fontSize: 14, color: Colors.textInverse, fontWeight: '300' },
 
   aiName: { fontSize: 15, fontWeight: '800', color: Colors.textPrimary },
   aiStatus: { fontSize: 11, color: Colors.accent, fontWeight: '500' },
@@ -260,7 +260,7 @@ const styles = StyleSheet.create({
     borderColor: Colors.border,
   },
   bubbleText: { fontSize: 14, color: Colors.textPrimary, lineHeight: 22 },
-  userBubbleText: { color: '#FFFFFF' },
+  userBubbleText: { color: Colors.textInverse },
   timestamp: { fontSize: 10, color: Colors.textMuted, alignSelf: 'flex-end' },
   userTimestamp: { color: 'rgba(255,255,255,0.5)' },
 
@@ -328,5 +328,5 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.surfaceElevated,
     shadowOpacity: 0,
   },
-  sendIcon: { color: '#FFFFFF', fontSize: 18, fontWeight: '300' },
+  sendIcon: { color: Colors.textInverse, fontSize: 18, fontWeight: '300' },
 });

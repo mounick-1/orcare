@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
+// Alert used for logout confirmation
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Colors } from '../theme/colors';
@@ -10,7 +11,7 @@ type Nav = NativeStackNavigationProp<RootStackParamList>;
 
 export default function ProfileScreen() {
   const navigation = useNavigation<Nav>();
-  const { user, logout, deleteAccount } = useAuth();
+  const { user, logout } = useAuth();
 
   const menuGroups = [
     {
@@ -56,11 +57,6 @@ export default function ProfileScreen() {
         {user?.email ? <Text style={styles.email}>{user.email}</Text> : null}
 
         <View style={styles.badges}>
-          {user?.language && (
-            <View style={styles.badge}>
-              <Text style={styles.badgeText}>🌐 {user.language}</Text>
-            </View>
-          )}
           {user?.gender && (
             <View style={styles.badge}>
               <Text style={styles.badgeText}>{user.gender}</Text>
@@ -117,19 +113,6 @@ export default function ProfileScreen() {
         </View>
       ))}
 
-      {/* Delete Account */}
-      <TouchableOpacity
-        style={styles.deleteBtn}
-        onPress={() =>
-          Alert.alert('Delete Account', 'This permanently deletes all your data. Cannot be undone.', [
-            { text: 'Cancel', style: 'cancel' },
-            { text: 'Delete', style: 'destructive', onPress: deleteAccount },
-          ])
-        }
-      >
-        <Text style={styles.deleteBtnText}>🗑️ Delete Account</Text>
-      </TouchableOpacity>
-
       <Text style={styles.version}>ORCare Web v1.0.0 · Powered by Gemini AI</Text>
       <View style={{ height: 32 }} />
     </ScrollView>
@@ -153,7 +136,7 @@ const styles = StyleSheet.create({
     height: 88,
     borderRadius: 44,
     borderWidth: 3,
-    borderColor: Colors.primaryLight,
+    borderColor: Colors.primary + '60',
     padding: 3,
     marginBottom: 4,
   },
@@ -220,15 +203,5 @@ const styles = StyleSheet.create({
   menuSub: { fontSize: 12, color: Colors.textSecondary, marginTop: 1 },
   menuArrow: { fontSize: 24, color: Colors.textMuted },
 
-  deleteBtn: {
-    marginHorizontal: 20,
-    marginTop: 20,
-    padding: 14,
-    borderRadius: 14,
-    borderWidth: 1.5,
-    borderColor: Colors.rose,
-    alignItems: 'center',
-  },
-  deleteBtnText: { color: Colors.rose, fontSize: 14, fontWeight: '700' },
   version: { textAlign: 'center', color: Colors.textMuted, fontSize: 11, marginTop: 16 },
 });

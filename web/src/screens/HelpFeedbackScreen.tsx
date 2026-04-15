@@ -316,7 +316,7 @@ const styles = StyleSheet.create({
     borderColor: Colors.border,
     padding: 12,
   },
-  textAreaFocused: { borderColor: Colors.primary, backgroundColor: 'rgba(135,116,225,0.08)' },
+  textAreaFocused: { borderColor: Colors.primary, backgroundColor: 'rgba(255,140,66,0.08)' },
   textArea: {
     fontSize: 14,
     color: Colors.textPrimary,

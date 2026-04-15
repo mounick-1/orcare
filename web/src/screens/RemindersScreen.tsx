@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   View, Text, StyleSheet, FlatList, TouchableOpacity, Switch, Alert, TextInput, Modal,
 } from 'react-native';
@@ -8,6 +8,25 @@ import { Colors } from '../theme/colors';
 import { Reminder, defaultReminders } from '../data/reminderData';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Reminders'>;
+
+type TimePeriod = 'morning' | 'afternoon' | 'evening';
+
+const periodInfo: Record<TimePeriod, { label: string; icon: string; subLabel: string; color: string; bgColor: string }> = {
+  morning: { label: 'Morning Routine', icon: '🌅', subLabel: '5 AM – 12 PM', color: '#FFB347', bgColor: '#FFB3471A' },
+  afternoon: { label: 'Afternoon Care', icon: '☀️', subLabel: '12 PM – 6 PM', color: '#4ADE80', bgColor: '#4ADE801A' },
+  evening: { label: 'Evening Routine', icon: '🌙', subLabel: '6 PM – 12 AM', color: '#8B5CF6', bgColor: '#8B5CF61A' },
+};
+
+function getTimePeriod(time: string): TimePeriod {
+  const hour = parseInt(time.split(':')[0], 10);
+  if (hour >= 5 && hour < 12) return 'morning';
+  if (hour >= 12 && hour < 18) return 'afternoon';
+  return 'evening';
+}
+
+type ListItem =
+  | { type: 'header'; period: TimePeriod; count: number; activeCount: number }
+  | { type: 'reminder'; reminder: Reminder };
 
 export default function RemindersScreen({ navigation }: Props) {
   const [reminders, setReminders] = useState<Reminder[]>(defaultReminders);
@@ -39,6 +58,26 @@ export default function RemindersScreen({ navigation }: Props) {
   }
 
   const activeCount = reminders.filter((r) => r.isEnabled).length;
+
+  const listData = useMemo<ListItem[]>(() => {
+    const periods: TimePeriod[] = ['morning', 'afternoon', 'evening'];
+    const items: ListItem[] = [];
+    for (const period of periods) {
+      const group = reminders
+        .filter((r) => getTimePeriod(r.time) === period)
+        .sort((a, b) => a.time.localeCompare(b.time));
+      if (group.length > 0) {
+        items.push({
+          type: 'header',
+          period,
+          count: group.length,
+          activeCount: group.filter((r) => r.isEnabled).length,
+        });
+        items.push(...group.map((r) => ({ type: 'reminder' as const, reminder: r })));
+      }
+    }
+    return items;
+  }, [reminders]);
 
   return (
     <View style={styles.container}>
@@ -76,41 +115,64 @@ export default function RemindersScreen({ navigation }: Props) {
       </View>
 
       <FlatList
-        data={reminders}
-        keyExtractor={(item) => item.id.toString()}
+        data={listData}
+        keyExtractor={(item) =>
+          item.type === 'header' ? `header-${item.period}` : `reminder-${item.reminder.id}`
+        }
         contentContainerStyle={styles.list}
         showsVerticalScrollIndicator={false}
-        ListHeaderComponent={<Text style={styles.listHeader}>Your Reminders</Text>}
-        renderItem={({ item }) => (
-          <View style={[styles.card, !item.isEnabled && styles.cardDisabled]}>
-            <View style={[styles.iconBox, { backgroundColor: item.bgColor }]}>
-              <Text style={styles.icon}>{item.icon}</Text>
-            </View>
-
-            <View style={styles.info}>
-              <Text style={[styles.reminderTitle, !item.isEnabled && styles.disabledTitle]}>
-                {item.title}
-              </Text>
-              <TouchableOpacity onPress={() => item.isEnabled && openEdit(item)} disabled={!item.isEnabled}>
-                <View style={[styles.timeTag, { backgroundColor: item.isEnabled ? item.bgColor : Colors.borderLight }]}>
-                  <Text style={[styles.timeText, { color: item.isEnabled ? item.color : Colors.textMuted }]}>
-                    ⏰ {item.time}
-                  </Text>
-                  {item.isEnabled && (
-                    <Text style={[styles.editHint, { color: item.color }]}>edit</Text>
-                  )}
+        renderItem={({ item }) => {
+          if (item.type === 'header') {
+            const info = periodInfo[item.period];
+            return (
+              <View style={[styles.sectionHeader, { borderLeftColor: info.color }]}>
+                <View style={[styles.sectionIconBox, { backgroundColor: info.bgColor }]}>
+                  <Text style={styles.sectionIcon}>{info.icon}</Text>
                 </View>
-              </TouchableOpacity>
-            </View>
+                <View style={styles.sectionHeaderText}>
+                  <Text style={[styles.sectionLabel, { color: info.color }]}>{info.label}</Text>
+                  <Text style={styles.sectionSubLabel}>{info.subLabel}</Text>
+                </View>
+                <View style={[styles.sectionBadge, { backgroundColor: info.bgColor }]}>
+                  <Text style={[styles.sectionBadgeText, { color: info.color }]}>
+                    {item.activeCount}/{item.count} on
+                  </Text>
+                </View>
+              </View>
+            );
+          }
 
-            <Switch
-              value={item.isEnabled}
-              onValueChange={() => toggleReminder(item.id)}
-              trackColor={{ false: Colors.borderLight, true: item.color + '50' }}
-              thumbColor={item.isEnabled ? item.color : Colors.textMuted}
-            />
-          </View>
-        )}
+          const r = item.reminder;
+          return (
+            <View style={[styles.card, !r.isEnabled && styles.cardDisabled]}>
+              <View style={[styles.iconBox, { backgroundColor: r.bgColor }]}>
+                <Text style={styles.icon}>{r.icon}</Text>
+              </View>
+              <View style={styles.info}>
+                <Text style={[styles.reminderTitle, !r.isEnabled && styles.disabledTitle]}>
+                  {r.title}
+                </Text>
+                <TouchableOpacity onPress={() => r.isEnabled && openEdit(r)} disabled={!r.isEnabled}>
+                  <View style={[styles.timeTag, { backgroundColor: r.isEnabled ? r.bgColor : Colors.borderLight }]}>
+                    <Text style={[styles.timeText, { color: r.isEnabled ? r.color : Colors.textMuted }]}>
+                      ⏰ {r.time}
+                    </Text>
+                    {r.isEnabled && (
+                      <Text style={[styles.editHint, { color: r.color }]}>edit</Text>
+                    )}
+                  </View>
+                </TouchableOpacity>
+              </View>
+              <Switch
+                value={r.isEnabled}
+                onValueChange={() => toggleReminder(r.id)}
+                trackColor={{ false: Colors.borderLight, true: r.color + '50' }}
+                thumbColor={r.isEnabled ? r.color : Colors.textMuted}
+              />
+            </View>
+          );
+        }}
+        ListFooterComponent={<View style={{ height: 24 }} />}
       />
 
       {/* Edit Time Modal */}
@@ -209,14 +271,34 @@ const styles = StyleSheet.create({
   statsDivider: { width: 1, backgroundColor: 'rgba(255,255,255,0.2)', marginVertical: 4 },
 
   list: { padding: 16, gap: 10 },
-  listHeader: {
-    fontSize: 11,
-    fontWeight: '800',
-    color: Colors.textMuted,
-    textTransform: 'uppercase',
-    letterSpacing: 0.8,
-    marginBottom: 4,
+
+  sectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    borderRadius: 14,
+    borderLeftWidth: 3,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    marginTop: 6,
+    backgroundColor: Colors.surfaceElevated,
+    borderWidth: 1,
+    borderColor: Colors.border,
   },
+  sectionIconBox: {
+    width: 40,
+    height: 40,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
+  },
+  sectionIcon: { fontSize: 20 },
+  sectionHeaderText: { flex: 1, gap: 2 },
+  sectionLabel: { fontSize: 14, fontWeight: '800' },
+  sectionSubLabel: { fontSize: 11, color: Colors.textMuted, fontWeight: '500' },
+  sectionBadge: { borderRadius: 20, paddingHorizontal: 10, paddingVertical: 4 },
+  sectionBadgeText: { fontSize: 11, fontWeight: '700' },
 
   card: {
     flexDirection: 'row',
@@ -260,7 +342,7 @@ const styles = StyleSheet.create({
 
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.55)',
+    backgroundColor: Colors.shadowNeutral,
     alignItems: 'center',
     justifyContent: 'center',
     padding: 24,

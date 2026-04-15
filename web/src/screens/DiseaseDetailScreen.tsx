@@ -27,8 +27,8 @@ export default function DiseaseDetailScreen({ navigation, route }: Props) {
 
   return (
     <View style={styles.container}>
-      {/* Hero */}
-      <View style={[styles.hero, { backgroundColor: disease.bgColor }]}>
+      {/* Colored Hero */}
+      <View style={[styles.hero, { backgroundColor: disease.bgColor, borderBottomColor: disease.color + '30' }]}>
         <TouchableOpacity
           style={[styles.backBtn, { backgroundColor: disease.color + '20' }]}
           onPress={() => navigation.goBack()}
@@ -37,7 +37,7 @@ export default function DiseaseDetailScreen({ navigation, route }: Props) {
         </TouchableOpacity>
 
         <View style={styles.heroContent}>
-          <View style={[styles.heroIconBox, { backgroundColor: disease.color + '25' }]}>
+          <View style={[styles.heroIconBox, { backgroundColor: disease.color + '30' }]}>
             <Text style={styles.heroEmoji}>{disease.icon}</Text>
           </View>
           <View style={styles.heroText}>
@@ -45,54 +45,37 @@ export default function DiseaseDetailScreen({ navigation, route }: Props) {
               <Text style={[styles.tagText, { color: disease.color }]}>Oral Disease</Text>
             </View>
             <Text style={[styles.heroTitle, { color: disease.color }]}>{disease.name}</Text>
+            <Text style={styles.heroSub}>Tap a section to read more</Text>
           </View>
         </View>
       </View>
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        {/* What is Happening */}
-        <InfoCard
-          emoji="🔍"
-          label="What is Happening?"
-          text={disease.whatIsHappening}
-          bgColor={Colors.infoLight}
-          labelColor={Colors.info}
-        />
 
-        {/* What People Notice */}
-        <InfoCard
-          emoji="👁️"
-          label="What People Notice"
-          text={disease.whatPeopleNotice}
-          bgColor={Colors.secondaryLight}
-          labelColor={Colors.secondary}
-        />
+        {/* Section cards with step numbers */}
+        <SectionCard step={1} emoji="🔍" label="What is Happening?" text={disease.whatIsHappening} bgColor={Colors.infoLight} labelColor={Colors.info} />
+        <SectionCard step={2} emoji="👁️" label="What People Notice" text={disease.whatPeopleNotice} bgColor={Colors.secondaryLight} labelColor={Colors.secondary} />
+        <SectionCard step={3} emoji="❓" label="Why It Happens" text={disease.whyItHappens} bgColor={Colors.amberLight} labelColor={Colors.amber} />
+        <SectionCard step={4} emoji="⚠️" label="Why You Shouldn't Ignore It" text={disease.whyNotIgnore} bgColor={Colors.errorLight} labelColor={Colors.error} />
 
-        {/* Why It Happens */}
-        <InfoCard
-          emoji="❓"
-          label="Why It Happens"
-          text={disease.whyItHappens}
-          bgColor={Colors.amberLight}
-          labelColor={Colors.amber}
-        />
-
-        {/* Why You Shouldn't Ignore */}
-        <InfoCard
-          emoji="⚠️"
-          label="Why You Shouldn't Ignore It"
-          text={disease.whyNotIgnore}
-          bgColor={Colors.errorLight}
-          labelColor={Colors.error}
-        />
-
-        {/* When to See Dentist */}
+        {/* When to see dentist — prominent card */}
         <View style={styles.urgentCard}>
-          <View style={styles.urgentHeader}>
-            <Text style={styles.urgentEmoji}>🦷</Text>
-            <Text style={styles.urgentTitle}>When to See a Dentist</Text>
+          <View style={styles.urgentHeaderRow}>
+            <View style={styles.urgentIconBox}>
+              <Text style={{ fontSize: 20 }}>🦷</Text>
+            </View>
+            <View style={styles.urgentHeaderText}>
+              <Text style={styles.urgentStep}>Step 5</Text>
+              <Text style={styles.urgentTitle}>When to See a Dentist</Text>
+            </View>
           </View>
           <Text style={styles.urgentText}>{disease.whenToSeeDentist}</Text>
+        </View>
+
+        {/* Ask AI banner */}
+        <View style={styles.aiBanner}>
+          <Text style={styles.aiBannerLabel}>Still have questions?</Text>
+          <Text style={styles.aiBannerSub}>Our AI can give personalised guidance</Text>
         </View>
 
         {/* AI Button */}
@@ -102,29 +85,32 @@ export default function DiseaseDetailScreen({ navigation, route }: Props) {
           activeOpacity={0.85}
         >
           <View style={styles.aiBtnIcon}>
-            <Text style={{ fontSize: 20 }}>🤖</Text>
+            <Text style={styles.aiBtnStar}>✦</Text>
           </View>
           <View style={styles.aiBtnText}>
-            <Text style={styles.aiBtnTitle}>Ask ORCare AI</Text>
-            <Text style={styles.aiBtnSub}>Get personalized advice about {disease.name}</Text>
+            <Text style={styles.aiBtnTitle}>Ask AI About This Disease</Text>
+            <Text style={styles.aiBtnSub}>Chat with ORCare AI about {disease.name}</Text>
           </View>
           <Text style={styles.aiBtnArrow}>→</Text>
         </TouchableOpacity>
 
-        <View style={{ height: 24 }} />
+        <View style={{ height: 32 }} />
       </ScrollView>
     </View>
   );
 }
 
-function InfoCard({
-  emoji, label, text, bgColor, labelColor,
+function SectionCard({
+  step, emoji, label, text, bgColor, labelColor,
 }: {
-  emoji: string; label: string; text: string; bgColor: string; labelColor: string;
+  step: number; emoji: string; label: string; text: string; bgColor: string; labelColor: string;
 }) {
   return (
     <View style={[styles.sectionCard, { backgroundColor: bgColor }]}>
       <View style={styles.sectionHeader}>
+        <View style={[styles.stepBadge, { backgroundColor: labelColor + '20' }]}>
+          <Text style={[styles.stepText, { color: labelColor }]}>{step}</Text>
+        </View>
         <Text style={styles.sectionEmoji}>{emoji}</Text>
         <Text style={[styles.sectionLabel, { color: labelColor }]}>{label}</Text>
       </View>
@@ -140,6 +126,7 @@ const styles = StyleSheet.create({
     paddingTop: 56,
     paddingHorizontal: 20,
     paddingBottom: 24,
+    borderBottomWidth: 1,
   },
   backBtn: {
     width: 38,
@@ -151,46 +138,79 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
   },
   backArrow: { fontSize: 18, fontWeight: '700' },
+
   heroContent: { flexDirection: 'row', alignItems: 'center', gap: 16 },
   heroIconBox: {
-    width: 72,
-    height: 72,
-    borderRadius: 20,
+    width: 76,
+    height: 76,
+    borderRadius: 22,
     alignItems: 'center',
     justifyContent: 'center',
     flexShrink: 0,
   },
-  heroEmoji: { fontSize: 38 },
+  heroEmoji: { fontSize: 40 },
   heroText: { flex: 1, gap: 6 },
   tagPill: {
     alignSelf: 'flex-start',
     borderRadius: 20,
     paddingHorizontal: 10,
-    paddingVertical: 3,
+    paddingVertical: 4,
   },
   tagText: { fontSize: 11, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.5 },
-  heroTitle: { fontSize: 22, fontWeight: '800', lineHeight: 28 },
+  heroTitle: { fontSize: 22, fontWeight: '900', lineHeight: 28 },
+  heroSub: { fontSize: 11, color: Colors.textMuted, fontWeight: '500' },
 
   content: { padding: 16, gap: 12 },
 
   sectionCard: { borderRadius: 18, padding: 16, gap: 10 },
   sectionHeader: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  sectionEmoji: { fontSize: 18 },
-  sectionLabel: { fontSize: 14, fontWeight: '800' },
+  stepBadge: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
+  },
+  stepText: { fontSize: 12, fontWeight: '900' },
+  sectionEmoji: { fontSize: 16 },
+  sectionLabel: { fontSize: 14, fontWeight: '800', flex: 1 },
   sectionText: { fontSize: 14, color: Colors.textPrimary, lineHeight: 22 },
 
   urgentCard: {
     backgroundColor: Colors.errorLight,
     borderRadius: 18,
     padding: 16,
-    borderLeftWidth: 4,
-    borderLeftColor: Colors.error,
-    gap: 10,
+    borderWidth: 1,
+    borderColor: Colors.error + '40',
+    gap: 12,
   },
-  urgentHeader: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  urgentEmoji: { fontSize: 18 },
-  urgentTitle: { fontSize: 14, fontWeight: '800', color: Colors.error },
+  urgentHeaderRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  urgentIconBox: {
+    width: 44,
+    height: 44,
+    borderRadius: 14,
+    backgroundColor: Colors.error + '20',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
+  },
+  urgentHeaderText: { flex: 1, gap: 2 },
+  urgentStep: { fontSize: 10, fontWeight: '800', color: Colors.error, textTransform: 'uppercase', letterSpacing: 0.5 },
+  urgentTitle: { fontSize: 15, fontWeight: '800', color: Colors.error },
   urgentText: { fontSize: 14, color: Colors.textPrimary, lineHeight: 22 },
+
+  aiBanner: {
+    backgroundColor: Colors.primaryLight,
+    borderRadius: 14,
+    padding: 14,
+    alignItems: 'center',
+    gap: 4,
+    borderWidth: 1,
+    borderColor: Colors.primary + '30',
+  },
+  aiBannerLabel: { fontSize: 14, fontWeight: '700', color: Colors.primary },
+  aiBannerSub: { fontSize: 12, color: Colors.textSecondary },
 
   aiBtn: {
     flexDirection: 'row',
@@ -208,10 +228,11 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 14,
-    backgroundColor: 'rgba(255,255,255,0.2)',
+    backgroundColor: 'rgba(255,255,255,0.15)',
     alignItems: 'center',
     justifyContent: 'center',
   },
+  aiBtnStar: { fontSize: 22, color: Colors.textInverse, fontWeight: '300' },
   aiBtnText: { flex: 1 },
   aiBtnTitle: { fontSize: 15, fontWeight: '700', color: Colors.textInverse },
   aiBtnSub: { fontSize: 12, color: 'rgba(255,255,255,0.75)', marginTop: 2 },

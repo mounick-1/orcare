@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
+// Alert kept for Data Usage / Analytics info dialogs
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/AppNavigator';
 import { Colors } from '../theme/colors';
@@ -8,7 +9,7 @@ import { useAuth } from '../context/AuthContext';
 type Props = NativeStackScreenProps<RootStackParamList, 'PrivacySecurity'>;
 
 export default function PrivacySecurityScreen({ navigation }: Props) {
-  const { user, deleteAccount } = useAuth();
+  const { user } = useAuth();
 
   const securityItems = [
     {
@@ -66,18 +67,7 @@ export default function PrivacySecurityScreen({ navigation }: Props) {
   ];
 
   function handleDeleteAccount() {
-    Alert.alert(
-      'Delete Account',
-      'This will permanently delete your account and all associated data. This action cannot be undone.',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Delete Account',
-          style: 'destructive',
-          onPress: deleteAccount,
-        },
-      ]
-    );
+    navigation.navigate('DeleteAccount');
   }
 
   return (

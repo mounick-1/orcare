@@ -118,7 +118,7 @@ fun SymptomCheckerScreen(navController: NavController) {
                             enter = fadeIn() + slideInVertically(initialOffsetY = { 20 })
                         ) {
                             CompactSymptomCard(symptom) {
-                                val route = "chatbot/${symptom.title}"
+                                val route = "symptom_detail/${Uri.encode(symptom.title)}"
                                 navController.navigate(route)
                             }
                         }

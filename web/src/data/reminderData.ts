@@ -10,7 +10,7 @@ export interface Reminder {
 
 export const defaultReminders: Reminder[] = [
   { id: 1, title: 'Morning Brushing', time: '07:00', isEnabled: true, icon: '🪥', color: '#4A9EFF', bgColor: '#4A9EFF1A' },
-  { id: 2, title: 'Night Brushing', time: '22:00', isEnabled: true, icon: '🌙', color: '#8774E1', bgColor: '#8774E11A' },
+  { id: 2, title: 'Night Brushing', time: '22:00', isEnabled: true, icon: '🌙', color: '#8B5CF6', bgColor: '#8B5CF61A' },
   { id: 3, title: 'Flossing', time: '22:15', isEnabled: true, icon: '🧵', color: '#4ADE80', bgColor: '#4ADE801A' },
   { id: 4, title: 'Mouthwash (Morning)', time: '07:30', isEnabled: true, icon: '🧴', color: '#38BDF8', bgColor: '#38BDF81A' },
   { id: 5, title: 'Mouthwash (Evening)', time: '20:30', isEnabled: true, icon: '🧴', color: '#C084FC', bgColor: '#C084FC1A' },

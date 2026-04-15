@@ -136,6 +136,13 @@ class UserPreferences(private val context: Context) {
         }
     }
 
+    /** Wipe every stored key — called on account deletion */
+    suspend fun clearAllData() {
+        context.dataStore.edit { preferences ->
+            preferences.clear()
+        }
+    }
+
     val serverIp: Flow<String?> = context.dataStore.data
         .map { preferences ->
             preferences[SERVER_IP_KEY]

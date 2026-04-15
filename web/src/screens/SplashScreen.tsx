@@ -12,7 +12,7 @@ export default function SplashScreen({ navigation }: Props) {
 
   useEffect(() => {
     const t = setTimeout(() => {
-      navigation.replace('LanguageSelection');
+      navigation.replace(token && token !== 'guest' ? 'MainTabs' : 'SignIn');
     }, 2200);
     return () => clearTimeout(t);
   }, []);
@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
     width: 300,
     height: 300,
     borderRadius: 150,
-    backgroundColor: 'rgba(135,116,225,0.15)',
+    backgroundColor: 'rgba(255,140,66,0.12)',
     transform: [{ translateX: -150 }],
   },
   glowBottom: {
@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
     width: 200,
     height: 200,
     borderRadius: 100,
-    backgroundColor: 'rgba(74,158,255,0.1)',
+    backgroundColor: 'rgba(52,211,153,0.10)',
   },
 
   inner: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 20 },
@@ -105,20 +105,20 @@ const styles = StyleSheet.create({
     height: 136,
     borderRadius: 68,
     borderWidth: 1,
-    borderColor: 'rgba(135,116,225,0.25)',
+    borderColor: 'rgba(255,140,66,0.25)',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'rgba(135,116,225,0.04)',
+    backgroundColor: 'rgba(255,140,66,0.04)',
   },
   middleRing: {
     width: 108,
     height: 108,
     borderRadius: 54,
     borderWidth: 1,
-    borderColor: 'rgba(135,116,225,0.4)',
+    borderColor: 'rgba(255,140,66,0.4)',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'rgba(135,116,225,0.08)',
+    backgroundColor: 'rgba(255,140,66,0.08)',
   },
   logoBox: {
     width: 80,

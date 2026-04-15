@@ -1,5 +1,6 @@
 package com.simats.orcare.ui.screens
 
+import android.net.Uri
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -135,7 +136,7 @@ fun GenericSymptomDetailScreen(navController: NavController, symptomName: String
                 Box(modifier = Modifier.fillMaxWidth().padding(vertical = 24.dp)) {
                     ORCareButton(
                         text = "Ask AI about this",
-                        onClick = { navController.navigate("chatbot/$title") },
+                        onClick = { navController.navigate("chatbot/${Uri.encode(title)}") },
                         modifier = Modifier.fillMaxWidth().height(56.dp)
                     )
                 }

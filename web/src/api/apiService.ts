@@ -68,6 +68,16 @@ export async function updateProfile(data: {
   return res.data;
 }
 
+export async function requestDeleteOtp(email: string, password: string) {
+  const res = await api.post('/api/auth/request-delete-otp', { email, password });
+  return res.data;
+}
+
+export async function confirmDeleteAccount(email: string, otp: string) {
+  const res = await api.post('/api/auth/confirm-delete-account', { email, otp });
+  return res.data;
+}
+
 export async function deleteAccount() {
   const res = await api.delete('/api/users/profile');
   return res.data;

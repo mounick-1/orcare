@@ -93,3 +93,23 @@ data class UpdateProfileResponse(
     val success: Boolean
 )
 
+data class RequestDeleteOtpRequest(
+    val email: String,
+    val password: String
+)
+
+data class RequestDeleteOtpResponse(
+    val success: Boolean,
+    val message: String?
+)
+
+data class ConfirmDeleteAccountRequest(
+    val email: String,
+    val otp: String
+)
+
+data class ConfirmDeleteAccountResponse(
+    val success: Boolean,
+    val message: String?
+)
+

@@ -320,14 +320,14 @@ const styles = StyleSheet.create({
   headerMeta: { fontSize: 12, color: Colors.textSecondary },
   quizBadge: {
     alignSelf: 'flex-start',
-    backgroundColor: 'rgba(0,0,0,0.08)',
+    backgroundColor: Colors.primaryLight,
     borderRadius: 20,
     paddingHorizontal: 12,
     paddingVertical: 4,
     marginBottom: 4,
   },
   quizBadgeText: { fontSize: 14, fontWeight: '800' },
-  progressBar: { height: 6, backgroundColor: 'rgba(0,0,0,0.1)', borderRadius: 3, overflow: 'hidden' },
+  progressBar: { height: 6, backgroundColor: Colors.borderLight, borderRadius: 3, overflow: 'hidden' },
   progressFill: { height: 6, borderRadius: 3 },
 
   // Lesson

@@ -5,6 +5,7 @@ import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -15,49 +16,74 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.simats.orcare.ui.theme.*
+import com.simats.orcare.data.UserPreferences
 import com.simats.orcare.ui.components.*
+import com.simats.orcare.ui.theme.*
+import com.simats.orcare.ui.viewmodel.AuthState
+import com.simats.orcare.ui.viewmodel.AuthViewModel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.res.painterResource
+
+// Steps in the delete flow
+private enum class DeleteStep { CREDENTIALS, OTP, SUCCESS }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DeleteAccountScreen(navController: NavController) {
-    val strings = LocalORCareStrings.current
-    val scope = rememberCoroutineScope()
-    var showContent by remember { mutableStateOf(false) }
-    
-    val context = androidx.compose.ui.platform.LocalContext.current
-    val userPreferences = remember { com.simats.orcare.data.UserPreferences(context) }
-    
-    // Form state
-    var fullName by remember { mutableStateOf("") }
+    val context = LocalContext.current
+    val userPreferences = remember { UserPreferences(context) }
+    val viewModel: AuthViewModel = viewModel(
+        factory = AuthViewModel.Factory(
+            context.applicationContext as android.app.Application,
+            userPreferences
+        )
+    )
+
+    var step by remember { mutableStateOf(DeleteStep.CREDENTIALS) }
     var email by remember { mutableStateOf("") }
-    var phoneNumber by remember { mutableStateOf("") }
-    var reason by remember { mutableStateOf("") }
-    
-    // Validation state
-    var nameError by remember { mutableStateOf<String?>(null) }
-    var emailError by remember { mutableStateOf<String?>(null) }
-    var phoneError by remember { mutableStateOf<String?>(null) }
-    
-    var showConfirmationDialog by remember { mutableStateOf(false) }
-    var isDeleting by remember { mutableStateOf(false) }
-    var isSuccess by remember { mutableStateOf(false) }
+    var password by remember { mutableStateOf("") }
+    var passwordVisible by remember { mutableStateOf(false) }
+    var otp by remember { mutableStateOf("") }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
+    var showContent by remember { mutableStateOf(false) }
+
+    val deleteOtpState by viewModel.deleteOtpState.collectAsState()
+    val deleteConfirmState by viewModel.deleteConfirmState.collectAsState()
+
+    // OTP request response
+    LaunchedEffect(deleteOtpState) {
+        when (val s = deleteOtpState) {
+            is AuthState.Success -> {
+                errorMessage = null
+                step = DeleteStep.OTP
+            }
+            is AuthState.Error -> errorMessage = s.message
+            else -> {}
+        }
+    }
+
+    // Delete confirm response
+    LaunchedEffect(deleteConfirmState) {
+        when (val s = deleteConfirmState) {
+            is AuthState.Success -> {
+                errorMessage = null
+                step = DeleteStep.SUCCESS
+            }
+            is AuthState.Error -> errorMessage = s.message
+            else -> {}
+        }
+    }
 
     LaunchedEffect(Unit) {
         delay(100)
@@ -71,16 +97,26 @@ fun DeleteAccountScreen(navController: NavController) {
                 .statusBarsPadding()
                 .navigationBarsPadding()
         ) {
+            // Top bar
             Box(modifier = Modifier.fillMaxWidth().padding(8.dp)) {
-                IconButton(onClick = { navController.popBackStack() }) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-                        contentDescription = "Back",
-                        tint = TextPrimary
-                    )
+                if (step != DeleteStep.SUCCESS) {
+                    IconButton(onClick = {
+                        if (step == DeleteStep.OTP) step = DeleteStep.CREDENTIALS
+                        else navController.popBackStack()
+                    }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
+                            contentDescription = "Back",
+                            tint = TextPrimary
+                        )
+                    }
                 }
                 Text(
-                    text = "Account Deletion",
+                    text = when (step) {
+                        DeleteStep.CREDENTIALS -> "Delete Account"
+                        DeleteStep.OTP -> "Verify Identity"
+                        DeleteStep.SUCCESS -> "Account Deleted"
+                    },
                     style = MaterialTheme.typography.titleLarge.copy(
                         fontWeight = FontWeight.ExtraBold,
                         color = TextPrimary,
@@ -90,257 +126,313 @@ fun DeleteAccountScreen(navController: NavController) {
                 )
             }
 
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-                    .padding(horizontal = 24.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+            AnimatedVisibility(
+                visible = showContent,
+                enter = fadeIn(tween(600)) + slideInVertically(initialOffsetY = { 30 })
             ) {
-                Spacer(modifier = Modifier.height(20.dp))
-                
-                AnimatedVisibility(
-                    visible = showContent,
-                    enter = fadeIn(tween(1000)) + slideInVertically(initialOffsetY = { 30 })
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .verticalScroll(rememberScrollState())
+                        .padding(horizontal = 24.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    // Icon
+                    Surface(
+                        modifier = Modifier.size(88.dp),
+                        shape = CircleShape,
+                        color = if (step == DeleteStep.SUCCESS) Color(0xFF43A047).copy(alpha = 0.1f)
+                                else ErrorRed.copy(alpha = 0.1f)
+                    ) {
+                        Box(contentAlignment = Alignment.Center) {
+                            Icon(
+                                imageVector = when (step) {
+                                    DeleteStep.SUCCESS -> Icons.Rounded.CheckCircle
+                                    DeleteStep.OTP -> Icons.Rounded.MarkEmailRead
+                                    else -> Icons.Rounded.PersonRemove
+                                },
+                                contentDescription = null,
+                                tint = if (step == DeleteStep.SUCCESS) Color(0xFF43A047) else ErrorRed,
+                                modifier = Modifier.size(44.dp)
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(20.dp))
+
+                    Text(
+                        text = when (step) {
+                            DeleteStep.CREDENTIALS -> "Close Your Account"
+                            DeleteStep.OTP -> "Check Your Email"
+                            DeleteStep.SUCCESS -> "Account Deleted"
+                        },
+                        style = MaterialTheme.typography.headlineSmall.copy(
+                            fontWeight = FontWeight.ExtraBold,
+                            color = TextPrimary,
+                            letterSpacing = (-0.5).sp,
+                            textAlign = TextAlign.Center
+                        )
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = when (step) {
+                            DeleteStep.CREDENTIALS ->
+                                "Enter your account email and password to confirm your identity before deletion."
+                            DeleteStep.OTP ->
+                                "A 6-digit verification code has been sent to $email. Enter it below to permanently delete your account."
+                            DeleteStep.SUCCESS ->
+                                "Your account and all associated data have been permanently removed from our servers."
+                        },
+                        style = MaterialTheme.typography.bodyMedium.copy(
+                            color = TextSecondary,
+                            textAlign = TextAlign.Center,
+                            lineHeight = 22.sp
+                        ),
+                        modifier = Modifier.padding(horizontal = 8.dp)
+                    )
+
+                    Spacer(modifier = Modifier.height(28.dp))
+
+                    // Error banner
+                    AnimatedVisibility(visible = errorMessage != null) {
                         Surface(
-                            modifier = Modifier.size(100.dp),
-                            shape = CircleShape,
-                            color = ErrorRed.copy(alpha = 0.1f)
+                            modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
+                            shape = RoundedCornerShape(14.dp),
+                            color = ErrorRed.copy(alpha = 0.1f),
+                            border = androidx.compose.foundation.BorderStroke(1.dp, ErrorRed.copy(alpha = 0.3f))
                         ) {
-                            Box(contentAlignment = Alignment.Center) {
-                                Icon(
-                                    imageVector = Icons.Rounded.PersonRemove,
-                                    contentDescription = null,
-                                    tint = ErrorRed,
-                                    modifier = Modifier.size(48.dp)
+                            Row(
+                                modifier = Modifier.padding(12.dp),
+                                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(Icons.Rounded.ErrorOutline, null, tint = ErrorRed, modifier = Modifier.size(18.dp))
+                                Text(
+                                    errorMessage ?: "",
+                                    style = MaterialTheme.typography.bodySmall.copy(color = ErrorRed),
+                                    modifier = Modifier.weight(1f)
                                 )
                             }
                         }
-                        
-                        Spacer(modifier = Modifier.height(32.dp))
-                        
-                        Text(
-                            text = "Close Your Account",
-                            style = MaterialTheme.typography.displaySmall.copy(
-                                fontWeight = FontWeight.ExtraBold,
-                                color = TextPrimary,
-                                letterSpacing = (-1).sp,
-                                textAlign = TextAlign.Center
-                            )
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            text = "We're sorry to see you go. Please complete the form below to initiate account deletion.",
-                            style = MaterialTheme.typography.bodyMedium.copy(
-                                color = TextSecondary,
-                                letterSpacing = 0.2.sp,
-                                textAlign = TextAlign.Center
-                            ),
-                            modifier = Modifier.padding(horizontal = 12.dp)
-                        )
-                        
-                        Spacer(modifier = Modifier.height(40.dp))
-                        
-                        if (isSuccess) {
-                            DeletionSuccessCard {
-                                navController.navigate("sign_in") {
-                                    popUpTo(0) { inclusive = true }
-                                }
-                            }
-                        } else {
-                            // Premium Form Card
-                            Surface(
-                                modifier = Modifier.fillMaxWidth().animateContentSize(),
-                                shape = RoundedCornerShape(32.dp),
-                                color = Color.White.copy(alpha = 0.9f),
-                                shadowElevation = 12.dp,
-                                border = BorderStroke(1.dp, Color.White.copy(alpha = 0.5f))
+                    }
+
+                    // Step: Credentials
+                    if (step == DeleteStep.CREDENTIALS) {
+                        Surface(
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(28.dp),
+                            color = Color.White.copy(alpha = 0.9f),
+                            shadowElevation = 8.dp
+                        ) {
+                            Column(
+                                modifier = Modifier.padding(24.dp),
+                                verticalArrangement = Arrangement.spacedBy(16.dp)
                             ) {
-                                Column(
-                                    modifier = Modifier.padding(28.dp),
-                                    verticalArrangement = Arrangement.spacedBy(20.dp)
-                                ) {
-                                    ORCareTextField(
-                                        value = fullName,
-                                        onValueChange = { fullName = it; nameError = null },
-                                        label = strings.fullName,
-                                        imageVector = Icons.Rounded.Person,
-                                        isError = nameError != null
-                                    )
-                                    if (nameError != null) ErrorText(nameError!!)
-                                    
-                                    ORCareTextField(
-                                        value = email,
-                                        onValueChange = { email = it; emailError = null },
-                                        label = strings.email,
-                                        imageVector = Icons.Rounded.Email,
-                                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-                                        isError = emailError != null
-                                    )
-                                    if (emailError != null) ErrorText(emailError!!)
-                                    
-                                    ORCareTextField(
-                                        value = phoneNumber,
-                                        onValueChange = { phoneNumber = it; phoneError = null },
-                                        label = "Phone Number",
-                                        imageVector = Icons.Rounded.Phone,
-                                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                                        isError = phoneError != null
-                                    )
-                                    if (phoneError != null) ErrorText(phoneError!!)
-                                    
-                                    OutlinedTextField(
-                                        value = reason,
-                                        onValueChange = { reason = it },
-                                        label = { Text("Reason for leaving (Optional)") },
-                                        modifier = Modifier.fillMaxWidth().height(120.dp),
-                                        shape = RoundedCornerShape(20.dp),
-                                        colors = OutlinedTextFieldDefaults.colors(
-                                            unfocusedBorderColor = GrayBorder.copy(alpha = 0.5f),
-                                            focusedBorderColor = PrimaryOrange,
-                                            focusedLabelColor = PrimaryOrange,
-                                            unfocusedLabelColor = TextMuted,
-                                            focusedContainerColor = SurfaceWhite.copy(alpha = 0.5f),
-                                            unfocusedContainerColor = SurfaceWhite.copy(alpha = 0.3f)
-                                        )
-                                    )
-                                    
-                                    Spacer(modifier = Modifier.height(8.dp))
-                                    
-                                    ORCareButton(
-                                        text = "Delete My Account",
-                                        isLoading = isDeleting,
-                                        containerColor = ErrorRed,
-                                        onClick = {
-                                            if (validateForm(fullName, email, phoneNumber, { nameError = it }, { emailError = it }, { phoneError = it })) {
-                                                showConfirmationDialog = true
-                                            }
+                                ORCareTextField(
+                                    value = email,
+                                    onValueChange = { email = it; errorMessage = null },
+                                    label = "Email Address",
+                                    imageVector = Icons.Rounded.Email,
+                                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
+                                )
+
+                                ORCareTextField(
+                                    value = password,
+                                    onValueChange = { password = it; errorMessage = null },
+                                    label = "Password",
+                                    imageVector = Icons.Rounded.Lock,
+                                    visualTransformation = if (passwordVisible) VisualTransformation.None
+                                                           else PasswordVisualTransformation(),
+                                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                                    trailingIcon = {
+                                        IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                                            Icon(
+                                                imageVector = if (passwordVisible) Icons.Rounded.VisibilityOff
+                                                              else Icons.Rounded.Visibility,
+                                                contentDescription = null,
+                                                tint = TextMuted
+                                            )
                                         }
+                                    }
+                                )
+
+                                Spacer(modifier = Modifier.height(4.dp))
+
+                                ORCareButton(
+                                    text = "Send Verification Code",
+                                    isLoading = deleteOtpState is AuthState.Loading,
+                                    containerColor = ErrorRed,
+                                    onClick = {
+                                        errorMessage = null
+                                        if (email.isBlank() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                                            errorMessage = "Enter a valid email address"
+                                        } else if (password.isBlank()) {
+                                            errorMessage = "Password is required"
+                                        } else {
+                                            viewModel.requestDeleteOtp(email.trim(), password)
+                                        }
+                                    },
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        // Warning box
+                        Surface(
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(16.dp),
+                            color = ErrorRed.copy(alpha = 0.06f),
+                            border = androidx.compose.foundation.BorderStroke(1.dp, ErrorRed.copy(alpha = 0.2f))
+                        ) {
+                            Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                                Text(
+                                    "⚠️ This will permanently delete:",
+                                    style = MaterialTheme.typography.labelLarge.copy(
+                                        fontWeight = FontWeight.Bold, color = ErrorRed
                                     )
+                                )
+                                listOf(
+                                    "Your account and profile data",
+                                    "All chat history and AI conversations",
+                                    "Learning progress and quiz results",
+                                    "All credentials from our database"
+                                ).forEach { item ->
+                                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                        Text("•", color = ErrorRed, fontWeight = FontWeight.Bold)
+                                        Text(item, style = MaterialTheme.typography.bodySmall.copy(color = TextSecondary))
+                                    }
                                 }
                             }
                         }
-                        
-                        Spacer(modifier = Modifier.height(40.dp))
                     }
+
+                    // Step: OTP
+                    if (step == DeleteStep.OTP) {
+                        Surface(
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(28.dp),
+                            color = Color.White.copy(alpha = 0.9f),
+                            shadowElevation = 8.dp
+                        ) {
+                            Column(
+                                modifier = Modifier.padding(24.dp),
+                                verticalArrangement = Arrangement.spacedBy(16.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(
+                                    "Enter 6-Digit Code",
+                                    style = MaterialTheme.typography.titleMedium.copy(
+                                        fontWeight = FontWeight.Bold, color = TextPrimary
+                                    )
+                                )
+
+                                OutlinedTextField(
+                                    value = otp,
+                                    onValueChange = { if (it.length <= 6 && it.all { c -> c.isDigit() }) { otp = it; errorMessage = null } },
+                                    modifier = Modifier.fillMaxWidth(),
+                                    textStyle = MaterialTheme.typography.headlineMedium.copy(
+                                        textAlign = TextAlign.Center,
+                                        fontWeight = FontWeight.ExtraBold,
+                                        letterSpacing = 12.sp,
+                                        color = ErrorRed
+                                    ),
+                                    shape = RoundedCornerShape(16.dp),
+                                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                                    singleLine = true,
+                                    colors = OutlinedTextFieldDefaults.colors(
+                                        focusedBorderColor = ErrorRed,
+                                        unfocusedBorderColor = ErrorRed.copy(alpha = 0.4f),
+                                        focusedContainerColor = Color(0xFFFFF5F5),
+                                        unfocusedContainerColor = Color(0xFFFFF5F5)
+                                    ),
+                                    placeholder = {
+                                        Text(
+                                            "······",
+                                            modifier = Modifier.fillMaxWidth(),
+                                            textAlign = TextAlign.Center,
+                                            style = MaterialTheme.typography.headlineMedium.copy(
+                                                color = TextMuted, letterSpacing = 12.sp
+                                            )
+                                        )
+                                    }
+                                )
+
+                                Text(
+                                    "Code expires in 10 minutes",
+                                    style = MaterialTheme.typography.bodySmall.copy(color = TextMuted),
+                                    textAlign = TextAlign.Center
+                                )
+
+                                ORCareButton(
+                                    text = "Permanently Delete Account",
+                                    isLoading = deleteConfirmState is AuthState.Loading,
+                                    containerColor = ErrorRed,
+                                    onClick = {
+                                        errorMessage = null
+                                        if (otp.length < 6) {
+                                            errorMessage = "Enter the 6-digit code"
+                                        } else {
+                                            viewModel.confirmDeleteAccount(email.trim(), otp) {
+                                                // handled by LaunchedEffect above
+                                            }
+                                        }
+                                    },
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+
+                                TextButton(onClick = {
+                                    otp = ""
+                                    errorMessage = null
+                                    viewModel.requestDeleteOtp(email.trim(), password)
+                                }) {
+                                    Text("Resend Code", color = TextMuted)
+                                }
+                            }
+                        }
+                    }
+
+                    // Step: Success
+                    if (step == DeleteStep.SUCCESS) {
+                        Surface(
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(28.dp),
+                            color = Color.White.copy(alpha = 0.9f),
+                            shadowElevation = 8.dp
+                        ) {
+                            Column(
+                                modifier = Modifier.padding(32.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.spacedBy(12.dp)
+                            ) {
+                                Text(
+                                    "All your data has been permanently removed from our servers and all devices.",
+                                    style = MaterialTheme.typography.bodyMedium.copy(
+                                        color = TextSecondary, textAlign = TextAlign.Center, lineHeight = 22.sp
+                                    )
+                                )
+                                Spacer(modifier = Modifier.height(8.dp))
+                                ORCareButton(
+                                    text = "Go to Login",
+                                    onClick = {
+                                        navController.navigate("sign_in") {
+                                            popUpTo(0) { inclusive = true }
+                                        }
+                                    },
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+                            }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(40.dp))
                 }
             }
-            
+
             SIMATSFooter()
         }
     }
-    
-    if (showConfirmationDialog) {
-        AlertDialog(
-            onDismissRequest = { showConfirmationDialog = false },
-            title = { 
-                Text(
-                    "Delete Permanently?", 
-                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.ExtraBold)
-                ) 
-            },
-            text = { 
-                Text(
-                    "This action is irreversible. All your data including health history and appointments will be permanently removed.",
-                    style = MaterialTheme.typography.bodyMedium.copy(color = TextSecondary)
-                ) 
-            },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        showConfirmationDialog = false
-                        isDeleting = true
-                        scope.launch {
-                            delay(2000)
-                            userPreferences.clearAuthToken()
-                            isDeleting = false
-                            isSuccess = true
-                        }
-                    }
-                ) {
-                    Text("YES, DELETE", color = ErrorRed, fontWeight = FontWeight.ExtraBold)
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showConfirmationDialog = false }) {
-                    Text("CANCEL", color = TextSecondary, fontWeight = FontWeight.Bold)
-                }
-            },
-            shape = RoundedCornerShape(32.dp),
-            containerColor = Color.White
-        )
-    }
-}
-
-@Composable
-fun ErrorText(text: String) {
-    Text(
-        text = text,
-        color = ErrorRed,
-        style = MaterialTheme.typography.labelSmall,
-        modifier = Modifier.padding(start = 4.dp, top = (-16).dp)
-    )
-}
-
-
-@Composable
-fun DeletionSuccessCard(onClose: () -> Unit) {
-    ORCareCard(modifier = Modifier.fillMaxWidth()) {
-        Column(
-            modifier = Modifier.padding(32.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Icon(
-                imageVector = Icons.Rounded.CheckCircle,
-                contentDescription = null,
-                tint = Color(0xFF43A047),
-                modifier = Modifier.size(64.dp)
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                "Request Submitted",
-                style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                "Your deletion request has been submitted. Our team will process it within 48 hours. You will be logged out now.",
-                textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.bodyMedium.copy(color = TextSecondary)
-            )
-            Spacer(modifier = Modifier.height(24.dp))
-            ORCareButton(text = "Go to Login", onClick = onClose)
-        }
-    }
-}
-
-private fun validateForm(
-    name: String,
-    email: String,
-    phone: String,
-    setNameError: (String?) -> Unit,
-    setEmailError: (String?) -> Unit,
-    setPhoneError: (String?) -> Unit
-): Boolean {
-    var isValid = true
-    
-    if (name.isBlank()) {
-        setNameError("Name is required")
-        isValid = false
-    }
-    
-    if (email.isBlank() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-        setEmailError("Enter a valid email address")
-        isValid = false
-    }
-    
-    if (phone.isBlank()) {
-        setPhoneError("Phone number is required")
-        isValid = false
-    }
-    
-    return isValid
 }

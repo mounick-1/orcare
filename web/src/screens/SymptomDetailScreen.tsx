@@ -114,23 +114,31 @@ export default function SymptomDetailScreen({ navigation, route }: Props) {
           <Text style={styles.urgentText}>{detail.whenToSeeDentist}</Text>
         </View>
 
-        {/* AI Button */}
+        {/* Ask AI Banner */}
+        <View style={styles.aiBanner}>
+          <Text style={styles.aiBannerLabel}>Still have questions?</Text>
+          <Text style={styles.aiBannerSub}>Our AI can give personalised guidance</Text>
+        </View>
+
         <TouchableOpacity
           style={styles.aiBtn}
           onPress={() => navigation.navigate('Chatbot', { symptomName })}
           activeOpacity={0.85}
         >
           <View style={styles.aiBtnIcon}>
-            <Text style={{ fontSize: 20 }}>🤖</Text>
+            <Text style={styles.aiBtnStar}>✦</Text>
           </View>
           <View style={styles.aiBtnText}>
-            <Text style={styles.aiBtnTitle}>Ask ORCare AI</Text>
-            <Text style={styles.aiBtnSub}>Get personalized advice about this symptom</Text>
+            <Text style={styles.aiBtnTitle}>Ask AI About This Complaint</Text>
+            <Text style={styles.aiBtnSub}>
+              Chat with ORCare AI about{' '}
+              {symptomName.replace(/\b\w/g, (c) => c.toUpperCase())}
+            </Text>
           </View>
           <Text style={styles.aiBtnArrow}>→</Text>
         </TouchableOpacity>
 
-        <View style={{ height: 24 }} />
+        <View style={{ height: 32 }} />
       </ScrollView>
     </View>
   );
@@ -244,14 +252,27 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 8,
   },
+  aiBanner: {
+    backgroundColor: Colors.primaryLight,
+    borderRadius: 14,
+    padding: 14,
+    alignItems: 'center',
+    gap: 4,
+    borderWidth: 1,
+    borderColor: Colors.primary + '30',
+  },
+  aiBannerLabel: { fontSize: 14, fontWeight: '700', color: Colors.primary },
+  aiBannerSub: { fontSize: 12, color: Colors.textSecondary },
+
   aiBtnIcon: {
     width: 44,
     height: 44,
     borderRadius: 14,
-    backgroundColor: 'rgba(255,255,255,0.2)',
+    backgroundColor: 'rgba(255,255,255,0.15)',
     alignItems: 'center',
     justifyContent: 'center',
   },
+  aiBtnStar: { fontSize: 22, color: Colors.textInverse, fontWeight: '300' },
   aiBtnText: { flex: 1 },
   aiBtnTitle: { fontSize: 15, fontWeight: '700', color: Colors.textInverse },
   aiBtnSub: { fontSize: 12, color: 'rgba(255,255,255,0.75)', marginTop: 2 },

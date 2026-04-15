@@ -1,68 +1,68 @@
-// Gemini-inspired dark theme for ORCare
+// Light theme matching Android (ORCare)
 export const Colors = {
   // ── Backgrounds ──
-  background: '#0F0F11',
-  surface: '#1C1C20',
-  surfaceElevated: '#252529',
-  card: '#1C1C20',
+  background: '#F9FAFB',
+  surface: '#FFFFFF',
+  surfaceElevated: '#F3F4F6',
+  card: '#FFFFFF',
 
-  // ── Primary — Gemini Purple ──
-  primary: '#8774E1',
-  primaryDark: '#6B5BC8',
-  primaryLight: '#231E3A',   // dark purple surface (hex for + '40' compat)
-  primaryUltra: '#191620',
+  // ── Primary — Orange ──
+  primary: '#FF8C42',
+  primaryDark: '#E07030',
+  primaryLight: '#FFF0E6',   // light orange surface
+  primaryUltra: '#FFF8F3',
 
-  // ── Secondary — Gemini Blue ──
-  secondary: '#4A9EFF',
-  secondaryDark: '#3A8AE8',
-  secondaryLight: '#1A2540',  // dark blue surface
+  // ── Secondary — Mint ──
+  secondary: '#34D399',
+  secondaryDark: '#10B981',
+  secondaryLight: '#ECFDF5',  // light mint surface
 
-  // ── Accent — Teal ──
-  accent: '#29D9A7',
-  accentLight: '#0F2820',
+  // ── Accent — Mint (same as secondary) ──
+  accent: '#34D399',
+  accentLight: '#ECFDF5',
 
   // ── Rose ──
-  rose: '#FF6B8A',
-  roseLight: '#2A0F18',
+  rose: '#F43F5E',
+  roseLight: '#FFF1F3',
 
   // ── Amber ──
-  amber: '#FFB347',
-  amberLight: '#281E0A',
+  amber: '#F59E0B',
+  amberLight: '#FFFBEB',
 
   // ── Violet ──
-  violet: '#C084FC',
-  violetLight: '#230F30',
+  violet: '#8B5CF6',
+  violetLight: '#F5F3FF',
 
   // ── Cyan ──
-  cyan: '#38BDF8',
-  cyanLight: '#0A1F2A',
+  cyan: '#06B6D4',
+  cyanLight: '#ECFEFF',
 
   // ── Pink ──
-  pink: '#F472B6',
-  pinkLight: '#28101E',
+  pink: '#EC4899',
+  pinkLight: '#FDF2F8',
 
   // ── Text ──
-  textPrimary: '#E3E3E8',
-  textSecondary: '#8A8A9A',
-  textMuted: '#52525C',
+  textPrimary: '#1F2937',
+  textSecondary: '#4B5563',
+  textMuted: '#9CA3AF',
   textInverse: '#FFFFFF',
-  textAccent: '#8774E1',
+  textAccent: '#FF8C42',
 
   // ── Borders ──
-  border: '#2C2C34',
-  borderLight: '#222228',
+  border: '#E5E7EB',
+  borderLight: '#F3F4F6',
 
   // ── Semantic ──
-  error: '#FF6B6B',
-  errorLight: '#2A0F0F',
-  success: '#4ADE80',
-  successLight: '#0F2A18',
-  warning: '#FFB347',
-  warningLight: '#281E0A',
-  info: '#38BDF8',
-  infoLight: '#0A1F2A',
+  error: '#EF4444',
+  errorLight: '#FEF2F2',
+  success: '#10B981',
+  successLight: '#ECFDF5',
+  warning: '#F59E0B',
+  warningLight: '#FFFBEB',
+  info: '#3B82F6',
+  infoLight: '#EFF6FF',
 
   // ── Shadows ──
-  shadow: 'rgba(135,116,225,0.25)',
-  shadowNeutral: 'rgba(0,0,0,0.5)',
+  shadow: 'rgba(255,140,66,0.15)',
+  shadowNeutral: 'rgba(0,0,0,0.08)',
 };

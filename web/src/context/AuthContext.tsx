@@ -35,6 +35,9 @@ interface AuthContextType {
   updateProfile: (data: Partial<User>) => Promise<void>;
   logout: () => Promise<void>;
   deleteAccount: () => Promise<void>;
+  requestDeleteOtp: (email: string, password: string) => Promise<void>;
+  confirmDeleteAccount: (email: string, otp: string) => Promise<void>;
+  deleteAccountState: { status: AuthState; message: string };
   setLanguage: (lang: string) => Promise<void>;
   resetStates: () => void;
 }
@@ -52,6 +55,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [otpState, setOtpState] = useState<{ status: AuthState; message: string }>({ status: 'idle', message: '' });
   const [forgotState, setForgotState] = useState<{ status: AuthState; message: string }>({ status: 'idle', message: '' });
   const [profileUpdateState, setProfileUpdateState] = useState<{ status: AuthState; message: string }>({ status: 'idle', message: '' });
+  const [deleteAccountState, setDeleteAccountState] = useState<{ status: AuthState; message: string }>({ status: 'idle', message: '' });
 
   // Restore session on startup
   useEffect(() => {
@@ -175,6 +179,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await logout();
   }
 
+  async function requestDeleteOtp(email: string, password: string) {
+    setDeleteAccountState({ status: 'loading', message: '' });
+    try {
+      await apiService.requestDeleteOtp(email, password);
+      setDeleteAccountState({ status: 'success', message: 'OTP sent to your email' });
+    } catch (e: any) {
+      setDeleteAccountState({ status: 'error', message: e?.response?.data?.message ?? 'Invalid credentials' });
+    }
+  }
+
+  async function confirmDeleteAccount(email: string, otp: string) {
+    setDeleteAccountState({ status: 'loading', message: '' });
+    try {
+      await apiService.confirmDeleteAccount(email, otp);
+      // Wipe all local storage
+      await AsyncStorage.multiRemove(['authToken', 'user', 'language']);
+      apiService.setAuthToken(null);
+      setToken(null);
+      setUser(null);
+      resetStates();
+      setDeleteAccountState({ status: 'success', message: 'Account deleted' });
+    } catch (e: any) {
+      setDeleteAccountState({ status: 'error', message: e?.response?.data?.message ?? 'Invalid OTP' });
+    }
+  }
+
   async function setLanguage(lang: string) {
     await AsyncStorage.setItem('language', lang);
     setLang(lang);
@@ -194,7 +224,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         user, token, isLoading, language,
         loginState, registerState, otpState, forgotState, profileUpdateState,
         login, register, verifyOtp, resendOtp, forgotPassword, resetPassword,
-        updateProfile, logout, deleteAccount, setLanguage, resetStates,
+        updateProfile, logout, deleteAccount, requestDeleteOtp, confirmDeleteAccount,
+        deleteAccountState, setLanguage, resetStates,
       }}
     >
       {children}

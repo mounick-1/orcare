@@ -34,8 +34,8 @@ export const learningCategories: LearningCategory[] = [
     id: 'daily_hygiene',
     title: 'Daily Oral Hygiene',
     icon: '🪥',
-    color: '#8774E1',
-    bgColor: '#8774E11A',
+    color: '#8B5CF6',
+    bgColor: '#8B5CF61A',
     description: 'Master the fundamentals of daily oral care',
     modules: [
       {

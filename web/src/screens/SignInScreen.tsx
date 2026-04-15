@@ -46,8 +46,8 @@ export default function SignInScreen({ navigation }: Props) {
         <View style={styles.hero}>
           <View style={styles.logoRing}>
             <View style={styles.logoBox}>
-              <Text style={styles.logoEmoji}>🦷</Text>
-            </View>
+            <Text style={styles.logoEmoji}>✦</Text>
+          </View>
           </View>
           <Text style={styles.appName}>ORCare</Text>
           <Text style={styles.heroSub}>Oral Health Companion</Text>
@@ -168,7 +168,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  logoEmoji: { fontSize: 36 },
+  logoEmoji: { fontSize: 36, color: Colors.textInverse, fontWeight: '300' },
   appName: { fontSize: 28, fontWeight: '900', color: Colors.primary, letterSpacing: -0.5 },
   heroSub: { fontSize: 13, color: Colors.textMuted, marginTop: 2 },
 
@@ -201,7 +201,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     gap: 10,
   },
-  inputWrapFocused: { borderColor: Colors.primary, backgroundColor: 'rgba(135,116,225,0.12)' },
+  inputWrapFocused: { borderColor: Colors.primary, backgroundColor: 'rgba(255,140,66,0.10)' },
   inputIcon: { fontSize: 16 },
   input: {
     flex: 1,

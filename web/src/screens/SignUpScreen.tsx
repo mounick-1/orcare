@@ -295,7 +295,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     gap: 8,
   },
-  inputWrapFocused: { borderColor: Colors.primary, backgroundColor: 'rgba(135,116,225,0.12)' },
+  inputWrapFocused: { borderColor: Colors.primary, backgroundColor: 'rgba(255,140,66,0.10)' },
   inputIcon: { fontSize: 15 },
   input: { flex: 1, paddingVertical: 12, fontSize: 14, color: Colors.textPrimary },
   eyeBtn: { padding: 4 },

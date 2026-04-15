@@ -33,8 +33,8 @@ export const diseases: Disease[] = [
     id: 'cavities',
     name: 'Cavities (Tooth Decay)',
     icon: '⚠️',
-    color: '#8774E1',
-    bgColor: '#8774E11A',
+    color: '#8B5CF6',
+    bgColor: '#8B5CF61A',
     whatIsHappening:
       "Tooth decay is a process where the hard mineral structure of the tooth (enamel) is destroyed over time. It starts with demineralization, where acids produced by mouth bacteria dissolve surface minerals. If this process continues, it creates a hole or 'cavity' that penetrates the enamel and reaches the softer dentin layer underneath.",
     whatPeopleNotice:
@@ -67,8 +67,8 @@ export const diseases: Disease[] = [
     id: 'oral_cancer',
     name: 'Oral Cancer',
     icon: '🔬',
-    color: '#8774E1',
-    bgColor: '#8774E11A',
+    color: '#8B5CF6',
+    bgColor: '#8B5CF61A',
     whatIsHappening:
       'Oral cancer is the result of abnormal cell growth in the mouth or throat. It can affect the lips, tongue, inner lining of the cheeks, gums, or the floor/roof of the mouth. In its early stages, it often looks like a harmless sore or discoloration, making it difficult for patients to identify without a professional screening.',
     whatPeopleNotice:
@@ -101,8 +101,8 @@ export const diseases: Disease[] = [
     id: 'mouth_ulcers',
     name: 'Mouth Ulcers (Canker Sores)',
     icon: '🔥',
-    color: '#8774E1',
-    bgColor: '#8774E11A',
+    color: '#8B5CF6',
+    bgColor: '#8B5CF61A',
     whatIsHappening:
       "These are small, shallow lesions that develop on the soft tissues in your mouth or at the base of your gums. Unlike cold sores, canker sores don't occur on the surface of your lips and aren't contagious, but they can be extremely painful and make eating or talking difficult.",
     whatPeopleNotice:

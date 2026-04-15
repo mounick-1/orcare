@@ -16,7 +16,7 @@ export default function LearningCenterScreen() {
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <View>
+        <View style={styles.headerLeft}>
           <Text style={styles.title}>Learning Center</Text>
           <Text style={styles.subtitle}>{learningCategories.length} categories · {totalModules} modules</Text>
         </View>
@@ -25,47 +25,59 @@ export default function LearningCenterScreen() {
         </View>
       </View>
 
-      {/* Progress Banner */}
-      <View style={styles.progressBanner}>
-        <View style={styles.progressLeft}>
-          <Text style={styles.progressTitle}>Keep Learning!</Text>
-          <Text style={styles.progressSub}>Complete modules to earn points</Text>
-        </View>
-        <View style={styles.progressRight}>
-          <Text style={styles.progressPoints}>0</Text>
-          <Text style={styles.progressPtsLabel}>pts</Text>
-        </View>
-      </View>
-
       <FlatList
         data={learningCategories}
         keyExtractor={(item) => item.id}
+        numColumns={2}
+        columnWrapperStyle={styles.row}
         contentContainerStyle={styles.list}
         showsVerticalScrollIndicator={false}
+        ListHeaderComponent={
+          <View style={styles.statsBar}>
+            <View style={styles.statChip}>
+              <Text style={styles.statChipVal}>{learningCategories.length}</Text>
+              <Text style={styles.statChipLabel}>Categories</Text>
+            </View>
+            <View style={[styles.statChip, { backgroundColor: Colors.secondaryLight }]}>
+              <Text style={[styles.statChipVal, { color: Colors.secondary }]}>{totalModules}</Text>
+              <Text style={[styles.statChipLabel, { color: Colors.secondary }]}>Modules</Text>
+            </View>
+            <View style={[styles.statChip, { backgroundColor: Colors.accentLight }]}>
+              <Text style={[styles.statChipVal, { color: Colors.accent }]}>Free</Text>
+              <Text style={[styles.statChipLabel, { color: Colors.accent }]}>Access</Text>
+            </View>
+          </View>
+        }
         renderItem={({ item }) => (
           <TouchableOpacity
-            style={styles.card}
+            style={[styles.card, { borderColor: item.color + '30' }]}
             onPress={() => navigation.navigate('LearningCategory', { categoryId: item.id })}
             activeOpacity={0.85}
           >
-            <View style={[styles.cardIconBox, { backgroundColor: item.bgColor }]}>
-              <Text style={styles.cardEmoji}>{item.icon}</Text>
-            </View>
-            <View style={styles.cardContent}>
-              <View style={styles.cardTop}>
-                <Text style={styles.cardTitle}>{item.title}</Text>
-                <View style={[styles.countBadge, { backgroundColor: item.bgColor }]}>
-                  <Text style={[styles.countText, { color: item.color }]}>{item.modules.length} modules</Text>
-                </View>
+            {/* Colored top band */}
+            <View style={[styles.cardBand, { backgroundColor: item.bgColor }]}>
+              <View style={[styles.cardIconBox, { backgroundColor: item.color + '25' }]}>
+                <Text style={styles.cardEmoji}>{item.icon}</Text>
               </View>
-              <Text style={styles.cardDesc} numberOfLines={1}>{item.description}</Text>
-              <View style={styles.progressBarBg}>
-                <View style={[styles.progressBarFill, { backgroundColor: item.color, width: '0%' }]} />
+              <View style={[styles.moduleBadge, { backgroundColor: item.color + '20' }]}>
+                <Text style={[styles.moduleBadgeText, { color: item.color }]}>{item.modules.length} modules</Text>
               </View>
             </View>
-            <Text style={[styles.cardArrow, { color: item.color }]}>›</Text>
+
+            {/* Card body */}
+            <View style={styles.cardBody}>
+              <Text style={[styles.cardTitle, { color: item.color }]}>{item.title}</Text>
+              <Text style={styles.cardDesc} numberOfLines={2}>{item.description}</Text>
+            </View>
+
+            {/* Card footer */}
+            <View style={[styles.cardFooter, { borderTopColor: item.color + '20' }]}>
+              <Text style={[styles.cardCTA, { color: item.color }]}>Start Learning</Text>
+              <Text style={[styles.cardArrow, { color: item.color }]}>→</Text>
+            </View>
           </TouchableOpacity>
         )}
+        ListFooterComponent={<View style={{ height: 24 }} />}
       />
     </View>
   );
@@ -73,6 +85,7 @@ export default function LearningCenterScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.background },
+
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -83,6 +96,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: Colors.border,
   },
+  headerLeft: { gap: 2 },
   title: { fontSize: 22, fontWeight: '800', color: Colors.textPrimary },
   subtitle: { fontSize: 12, color: Colors.textSecondary, marginTop: 2 },
   headerBadge: {
@@ -95,60 +109,72 @@ const styles = StyleSheet.create({
   },
   headerBadgeEmoji: { fontSize: 24 },
 
-  progressBanner: {
+  statsBar: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    backgroundColor: Colors.primary,
-    margin: 20,
-    marginBottom: 4,
-    borderRadius: 18,
-    padding: 18,
+    gap: 10,
+    paddingBottom: 4,
   },
-  progressLeft: { gap: 4 },
-  progressTitle: { fontSize: 16, fontWeight: '800', color: Colors.textInverse },
-  progressSub: { fontSize: 12, color: 'rgba(255,255,255,0.7)' },
-  progressRight: { alignItems: 'center' },
-  progressPoints: { fontSize: 32, fontWeight: '900', color: Colors.textInverse },
-  progressPtsLabel: { fontSize: 11, color: 'rgba(255,255,255,0.7)', fontWeight: '600' },
+  statChip: {
+    flex: 1,
+    backgroundColor: Colors.primaryLight,
+    borderRadius: 14,
+    padding: 12,
+    alignItems: 'center',
+    gap: 2,
+  },
+  statChipVal: { fontSize: 18, fontWeight: '900', color: Colors.primary },
+  statChipLabel: { fontSize: 10, fontWeight: '700', color: Colors.primary, textTransform: 'uppercase' },
 
   list: { padding: 16, gap: 12 },
+  row: { gap: 12 },
+
   card: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flex: 1,
     backgroundColor: Colors.surface,
-    borderRadius: 18,
-    padding: 16,
-    gap: 14,
+    borderRadius: 20,
     borderWidth: 1,
-    borderColor: Colors.border,
+    overflow: 'hidden',
     shadowColor: Colors.shadowNeutral,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 1,
     shadowRadius: 8,
-    elevation: 2,
+    elevation: 3,
+  },
+
+  cardBand: {
+    padding: 16,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
   },
   cardIconBox: {
-    width: 56,
-    height: 56,
-    borderRadius: 18,
+    width: 52,
+    height: 52,
+    borderRadius: 16,
     alignItems: 'center',
     justifyContent: 'center',
-    flexShrink: 0,
   },
-  cardEmoji: { fontSize: 28 },
-  cardContent: { flex: 1, gap: 6 },
-  cardTop: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 8 },
-  cardTitle: { fontSize: 15, fontWeight: '700', color: Colors.textPrimary, flex: 1 },
-  countBadge: { borderRadius: 20, paddingHorizontal: 8, paddingVertical: 3, flexShrink: 0 },
-  countText: { fontSize: 10, fontWeight: '700' },
-  cardDesc: { fontSize: 12, color: Colors.textSecondary },
-  progressBarBg: {
-    height: 4,
-    backgroundColor: Colors.borderLight,
-    borderRadius: 2,
-    overflow: 'hidden',
+  cardEmoji: { fontSize: 26 },
+  moduleBadge: {
+    borderRadius: 20,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    alignSelf: 'flex-start',
   },
-  progressBarFill: { height: 4, borderRadius: 2 },
-  cardArrow: { fontSize: 28, fontWeight: '300', flexShrink: 0 },
+  moduleBadgeText: { fontSize: 10, fontWeight: '800' },
+
+  cardBody: { padding: 12, paddingTop: 8, gap: 4 },
+  cardTitle: { fontSize: 14, fontWeight: '800', lineHeight: 20 },
+  cardDesc: { fontSize: 11, color: Colors.textSecondary, lineHeight: 16 },
+
+  cardFooter: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 12,
+    paddingTop: 10,
+    borderTopWidth: 1,
+  },
+  cardCTA: { fontSize: 11, fontWeight: '700' },
+  cardArrow: { fontSize: 14, fontWeight: '800' },
 });

@@ -9,6 +9,8 @@ import androidx.lifecycle.viewModelScope
 import com.simats.orcare.data.UserPreferences
 import com.simats.orcare.data.api.RetrofitClient
 import com.simats.orcare.data.model.*
+import com.simats.orcare.data.model.RequestDeleteOtpRequest
+import com.simats.orcare.data.model.ConfirmDeleteAccountRequest
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -255,12 +257,54 @@ class AuthViewModel(
         }
     }
 
+    private val _deleteOtpState = MutableStateFlow<AuthState>(AuthState.Idle)
+    val deleteOtpState: StateFlow<AuthState> = _deleteOtpState.asStateFlow()
+
+    private val _deleteConfirmState = MutableStateFlow<AuthState>(AuthState.Idle)
+    val deleteConfirmState: StateFlow<AuthState> = _deleteConfirmState.asStateFlow()
+
+    fun requestDeleteOtp(email: String, password: String) {
+        viewModelScope.launch {
+            _deleteOtpState.value = AuthState.Loading
+            try {
+                val response = apiService.requestDeleteOtp(RequestDeleteOtpRequest(email, password))
+                if (response.isSuccessful && response.body()?.success == true) {
+                    _deleteOtpState.value = AuthState.Success(response.body()?.message ?: "OTP sent")
+                } else {
+                    _deleteOtpState.value = AuthState.Error(response.body()?.message ?: "Invalid credentials")
+                }
+            } catch (e: Exception) {
+                _deleteOtpState.value = AuthState.Error(e.message ?: "Network error")
+            }
+        }
+    }
+
+    fun confirmDeleteAccount(email: String, otp: String, onSuccess: () -> Unit) {
+        viewModelScope.launch {
+            _deleteConfirmState.value = AuthState.Loading
+            try {
+                val response = apiService.confirmDeleteAccount(ConfirmDeleteAccountRequest(email, otp))
+                if (response.isSuccessful && response.body()?.success == true) {
+                    // Wipe every key from DataStore
+                    userPreferences.clearAllData()
+                    resetState()
+                    _deleteConfirmState.value = AuthState.Success("Account deleted")
+                    onSuccess()
+                } else {
+                    _deleteConfirmState.value = AuthState.Error(response.body()?.message ?: "Invalid OTP")
+                }
+            } catch (e: Exception) {
+                _deleteConfirmState.value = AuthState.Error(e.message ?: "Network error")
+            }
+        }
+    }
+
     fun deleteAccount(onSuccess: () -> Unit) {
         viewModelScope.launch {
             try {
                 val response = apiService.deleteProfile()
                 if (response.isSuccessful) {
-                    userPreferences.clearAuthToken()
+                    userPreferences.clearAllData()
                     resetState()
                     onSuccess()
                 }

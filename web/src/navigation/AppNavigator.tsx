@@ -7,7 +7,6 @@ import { useAuth } from '../context/AuthContext';
 import { Colors } from '../theme/colors';
 
 import SplashScreen from '../screens/SplashScreen';
-import LanguageSelectionScreen from '../screens/LanguageSelectionScreen';
 import SignInScreen from '../screens/SignInScreen';
 import SignUpScreen from '../screens/SignUpScreen';
 import OtpVerificationScreen from '../screens/OtpVerificationScreen';
@@ -30,10 +29,10 @@ import HelpFeedbackScreen from '../screens/HelpFeedbackScreen';
 import PrivacyPolicyScreen from '../screens/PrivacyPolicyScreen';
 import PrivacySecurityScreen from '../screens/PrivacySecurityScreen';
 import ResetPasswordScreen from '../screens/ResetPasswordScreen';
+import DeleteAccountScreen from '../screens/DeleteAccountScreen';
 
 export type RootStackParamList = {
   Splash: undefined;
-  LanguageSelection: undefined;
   SignIn: undefined;
   SignUp: undefined;
   OtpVerification: { email: string; type: 'register' | 'forgot' };
@@ -53,6 +52,7 @@ export type RootStackParamList = {
   PrivacyPolicy: undefined;
   PrivacySecurity: undefined;
   ResetPassword: { email: string; otp: string };
+  DeleteAccount: undefined;
 };
 
 export type MainTabParamList = {
@@ -181,7 +181,6 @@ export default function AppNavigator() {
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false, animation: 'none' }} initialRouteName="Splash">
         <Stack.Screen name="Splash" component={SplashScreen} />
-        <Stack.Screen name="LanguageSelection" component={LanguageSelectionScreen} />
         <Stack.Screen name="SignIn" component={SignInScreen} />
         <Stack.Screen name="SignUp" component={SignUpScreen} />
         <Stack.Screen name="OtpVerification" component={OtpVerificationScreen} />
@@ -201,6 +200,7 @@ export default function AppNavigator() {
         <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicyScreen} />
         <Stack.Screen name="PrivacySecurity" component={PrivacySecurityScreen} />
         <Stack.Screen name="ResetPassword" component={ResetPasswordScreen} />
+        <Stack.Screen name="DeleteAccount" component={DeleteAccountScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

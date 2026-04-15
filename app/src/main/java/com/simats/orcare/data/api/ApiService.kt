@@ -30,6 +30,12 @@ interface ApiService {
     @retrofit2.http.DELETE("api/users/profile")
     suspend fun deleteProfile(): Response<Map<String, Any>>
 
+    @POST("api/auth/request-delete-otp")
+    suspend fun requestDeleteOtp(@Body request: RequestDeleteOtpRequest): Response<RequestDeleteOtpResponse>
+
+    @POST("api/auth/confirm-delete-account")
+    suspend fun confirmDeleteAccount(@Body request: ConfirmDeleteAccountRequest): Response<ConfirmDeleteAccountResponse>
+
 
     @retrofit2.http.GET("api/content/diseases")
     suspend fun getDiseases(): Response<List<DiseaseDto>>

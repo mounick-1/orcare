@@ -15,7 +15,7 @@ export interface SymptomDetail {
 }
 
 export const symptomsList: Symptom[] = [
-  { title: 'Tooth Pain', icon: '🦷', color: '#8774E1', bgColor: '#8774E11A' },
+  { title: 'Tooth Pain', icon: '🦷', color: '#8B5CF6', bgColor: '#8B5CF61A' },
   { title: 'Bleeding Gums', icon: '💉', color: '#4ADE80', bgColor: '#4ADE801A' },
   { title: 'Tooth Sensitivity', icon: '❄️', color: '#38BDF8', bgColor: '#38BDF81A' },
   { title: 'Oral Ulcers', icon: '😷', color: '#4A9EFF', bgColor: '#4A9EFF1A' },

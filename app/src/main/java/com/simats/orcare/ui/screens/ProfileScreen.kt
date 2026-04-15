@@ -255,10 +255,22 @@ fun ProfileScreen(navController: NavController) {
                                     onClick = { navController.navigate("reminders") }
                                 )
                                 SettingsRowItem(
+                                    icon = Icons.Rounded.Shield,
+                                    iconColor = PrimaryOrange,
+                                    title = "Privacy & Security",
+                                    onClick = { navController.navigate("privacy_security") }
+                                )
+                                SettingsRowItem(
                                     icon = Icons.Rounded.Description,
                                     iconColor = PrimaryOrange,
                                     title = strings.privacyPolicy,
                                     onClick = { navController.navigate("privacy_policy") }
+                                )
+                                SettingsRowItem(
+                                    icon = Icons.Rounded.HelpOutline,
+                                    iconColor = PrimaryOrange,
+                                    title = "Help & Feedback",
+                                    onClick = { navController.navigate("help_feedback") }
                                 )
                                 SettingsRowItem(
                                     icon = Icons.Rounded.DeleteForever,
