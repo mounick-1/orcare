@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { ArrowLeft, Shield } from 'lucide-react-native';
 import { RootStackParamList } from '../navigation/AppNavigator';
 import { Colors } from '../theme/colors';
 
@@ -60,7 +61,7 @@ export default function PrivacyPolicyScreen({ navigation }: Props) {
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity style={styles.backBtn} onPress={() => navigation.goBack()}>
-          <Text style={styles.backArrow}>←</Text>
+          <ArrowLeft size={20} color={Colors.primary} strokeWidth={2.5} />
         </TouchableOpacity>
         <View style={styles.headerText}>
           <Text style={styles.title}>Privacy Policy</Text>
@@ -76,7 +77,7 @@ export default function PrivacyPolicyScreen({ navigation }: Props) {
         <View style={styles.hero}>
           <View style={styles.heroIconRing}>
             <View style={styles.heroIconBox}>
-              <Text style={styles.heroEmoji}>🛡️</Text>
+              <Shield size={34} color={Colors.textInverse} strokeWidth={1.75} />
             </View>
           </View>
           <Text style={styles.heroTitle}>Your Privacy Matters</Text>

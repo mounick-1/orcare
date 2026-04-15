@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
 // Alert kept for Data Usage / Analytics info dialogs
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { ArrowLeft, Shield, Lock, Mail, FileText, ChevronRight, Trash2, BarChart3 } from 'lucide-react-native';
 import { RootStackParamList } from '../navigation/AppNavigator';
 import { Colors } from '../theme/colors';
 import { useAuth } from '../context/AuthContext';
@@ -13,7 +14,7 @@ export default function PrivacySecurityScreen({ navigation }: Props) {
 
   const securityItems = [
     {
-      icon: '🔑',
+      Icon: Lock,
       label: 'Change Password',
       sub: 'Reset via email verification',
       color: Colors.primary,
@@ -22,7 +23,7 @@ export default function PrivacySecurityScreen({ navigation }: Props) {
         navigation.navigate('ForgotPassword'),
     },
     {
-      icon: '📧',
+      Icon: Mail,
       label: 'Email Address',
       sub: user?.email ?? 'Not set',
       color: Colors.secondary,
@@ -33,7 +34,7 @@ export default function PrivacySecurityScreen({ navigation }: Props) {
 
   const privacyItems = [
     {
-      icon: '📄',
+      Icon: FileText,
       label: 'Privacy Policy',
       sub: 'Read our full privacy policy',
       color: Colors.accent,
@@ -41,7 +42,7 @@ export default function PrivacySecurityScreen({ navigation }: Props) {
       onPress: () => navigation.navigate('PrivacyPolicy'),
     },
     {
-      icon: '🍪',
+      Icon: Shield,
       label: 'Data Usage',
       sub: 'We never sell your personal data',
       color: Colors.violet,
@@ -53,7 +54,7 @@ export default function PrivacySecurityScreen({ navigation }: Props) {
         ),
     },
     {
-      icon: '📊',
+      Icon: BarChart3,
       label: 'Analytics',
       sub: 'Anonymous usage analytics only',
       color: Colors.amber,
@@ -75,7 +76,7 @@ export default function PrivacySecurityScreen({ navigation }: Props) {
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity style={styles.backBtn} onPress={() => navigation.goBack()}>
-          <Text style={styles.backArrow}>←</Text>
+          <ArrowLeft size={20} color={Colors.primary} strokeWidth={2.5} />
         </TouchableOpacity>
         <View style={styles.headerText}>
           <Text style={styles.title}>Privacy & Security</Text>
@@ -87,7 +88,7 @@ export default function PrivacySecurityScreen({ navigation }: Props) {
         {/* Status Banner */}
         <View style={styles.statusBanner}>
           <View style={styles.statusIcon}>
-            <Text style={styles.statusEmoji}>🛡️</Text>
+            <Shield size={22} color={Colors.accent} strokeWidth={2} />
           </View>
           <View style={styles.statusText}>
             <Text style={styles.statusTitle}>Account Secured</Text>
@@ -109,13 +110,13 @@ export default function PrivacySecurityScreen({ navigation }: Props) {
               activeOpacity={0.7}
             >
               <View style={[styles.menuIconBox, { backgroundColor: item.bgColor }]}>
-                <Text style={styles.menuIcon}>{item.icon}</Text>
+                <item.Icon size={20} color={item.color} strokeWidth={2} />
               </View>
               <View style={styles.menuText}>
                 <Text style={[styles.menuLabel, { color: item.color }]}>{item.label}</Text>
                 <Text style={styles.menuSub}>{item.sub}</Text>
               </View>
-              <Text style={styles.menuArrow}>›</Text>
+              <ChevronRight size={18} color={Colors.textMuted} strokeWidth={2} />
             </TouchableOpacity>
           ))}
         </View>
@@ -131,13 +132,13 @@ export default function PrivacySecurityScreen({ navigation }: Props) {
               activeOpacity={0.7}
             >
               <View style={[styles.menuIconBox, { backgroundColor: item.bgColor }]}>
-                <Text style={styles.menuIcon}>{item.icon}</Text>
+                <item.Icon size={20} color={item.color} strokeWidth={2} />
               </View>
               <View style={styles.menuText}>
                 <Text style={styles.menuLabel}>{item.label}</Text>
                 <Text style={styles.menuSub}>{item.sub}</Text>
               </View>
-              <Text style={styles.menuArrow}>›</Text>
+              <ChevronRight size={18} color={Colors.textMuted} strokeWidth={2} />
             </TouchableOpacity>
           ))}
         </View>
@@ -167,7 +168,8 @@ export default function PrivacySecurityScreen({ navigation }: Props) {
             </Text>
           </View>
           <TouchableOpacity style={styles.dangerBtn} onPress={handleDeleteAccount}>
-            <Text style={styles.dangerBtnText}>🗑️ Delete Account</Text>
+            <Trash2 size={16} color={Colors.rose} strokeWidth={2} />
+            <Text style={styles.dangerBtnText}>Delete Account</Text>
           </TouchableOpacity>
         </View>
 
@@ -289,13 +291,15 @@ const styles = StyleSheet.create({
   dangerTitle: { fontSize: 15, fontWeight: '700', color: Colors.rose },
   dangerSub: { fontSize: 12, color: Colors.textSecondary, marginTop: 4, lineHeight: 18 },
   dangerBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
     margin: 16,
     marginTop: 4,
     padding: 14,
     borderRadius: 12,
     borderWidth: 1.5,
     borderColor: Colors.rose,
-    alignItems: 'center',
   },
-  dangerBtnText: { color: Colors.rose, fontSize: 14, fontWeight: '700' },
+  dangerBtnText: { color: Colors.rose, fontSize: 14, fontWeight: '700', marginLeft: 6 },
 });

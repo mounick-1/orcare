@@ -3,6 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { View, Text, StyleSheet } from 'react-native';
+import { Home, Bot, BookOpen, Microscope, User } from 'lucide-react-native';
 import { useAuth } from '../context/AuthContext';
 import { Colors } from '../theme/colors';
 
@@ -66,20 +67,24 @@ export type MainTabParamList = {
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<MainTabParamList>();
 
-const tabs = [
-  { name: 'Home', emoji: '🏠', label: 'Home' },
-  { name: 'LearningCenter', emoji: '📚', label: 'Learn' },
-  { name: 'OralDisease', emoji: '🔬', label: 'Diseases' },
-  { name: 'Profile', emoji: '👤', label: 'Profile' },
-];
-
-function TabIcon({ emoji, label, focused, ai }: { emoji: string; label: string; focused: boolean; ai?: boolean }) {
+function TabIcon({
+  Icon,
+  label,
+  focused,
+}: {
+  Icon: React.ComponentType<{ size: number; color: string; strokeWidth: number }>;
+  label: string;
+  focused: boolean;
+}) {
   return (
     <View style={tabStyles.iconWrap}>
       {focused && <View style={tabStyles.activePill} />}
       <View style={[tabStyles.iconBox, focused && tabStyles.iconBoxActive]}>
-        <Text style={tabStyles.emoji}>{emoji}</Text>
-        {ai && !focused && <View style={tabStyles.aiDot} />}
+        <Icon
+          size={20}
+          color={focused ? Colors.primary : Colors.textMuted}
+          strokeWidth={focused ? 2.5 : 1.75}
+        />
       </View>
       <Text style={[tabStyles.label, focused && tabStyles.labelActive]}>{label}</Text>
     </View>
@@ -91,37 +96,21 @@ const tabStyles = StyleSheet.create({
   activePill: {
     position: 'absolute',
     top: 0,
-    width: 36,
-    height: 2,
-    borderRadius: 1,
+    width: 32,
+    height: 3,
+    borderRadius: 2,
     backgroundColor: Colors.primary,
-    shadowColor: Colors.primary,
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.8,
-    shadowRadius: 6,
   },
   iconBox: {
     width: 40,
     height: 34,
-    borderRadius: 12,
+    borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
   },
   iconBoxActive: { backgroundColor: Colors.primaryLight },
-  emoji: { fontSize: 20 },
-  label: { fontSize: 10, color: Colors.textMuted, marginTop: 2, fontWeight: '500' },
-  labelActive: { color: Colors.primary, fontWeight: '700' },
-  aiDot: {
-    position: 'absolute',
-    top: 2,
-    right: 2,
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: Colors.accent,
-    borderWidth: 1.5,
-    borderColor: Colors.surface,
-  },
+  label: { fontSize: 10, color: Colors.textMuted, marginTop: 2, fontFamily: 'Inter_500Medium' },
+  labelActive: { color: Colors.primary, fontFamily: 'Inter_600SemiBold' },
 });
 
 function ChatTabWrapper() {
@@ -140,25 +129,25 @@ function MainTabs() {
           height: 72,
           paddingBottom: 8,
           paddingTop: 0,
-          elevation: 20,
-          shadowColor: Colors.shadow,
-          shadowOffset: { width: 0, height: -4 },
+          elevation: 8,
+          shadowColor: Colors.shadowNeutral,
+          shadowOffset: { width: 0, height: -2 },
           shadowOpacity: 1,
-          shadowRadius: 12,
+          shadowRadius: 8,
         },
         tabBarShowLabel: false,
       }}
     >
       <Tab.Screen name="Home" component={HomeScreen}
-        options={{ tabBarIcon: ({ focused }) => <TabIcon emoji="🏠" label="Home" focused={focused} /> }} />
+        options={{ tabBarIcon: ({ focused }) => <TabIcon Icon={Home} label="Home" focused={focused} /> }} />
       <Tab.Screen name="ChatTab" component={ChatTabWrapper}
-        options={{ tabBarIcon: ({ focused }) => <TabIcon emoji="🤖" label="AI Chat" focused={focused} ai={true} /> }} />
+        options={{ tabBarIcon: ({ focused }) => <TabIcon Icon={Bot} label="AI Chat" focused={focused} /> }} />
       <Tab.Screen name="LearningCenter" component={LearningCenterScreen}
-        options={{ tabBarIcon: ({ focused }) => <TabIcon emoji="📚" label="Learn" focused={focused} /> }} />
+        options={{ tabBarIcon: ({ focused }) => <TabIcon Icon={BookOpen} label="Learn" focused={focused} /> }} />
       <Tab.Screen name="OralDisease" component={OralDiseaseScreen}
-        options={{ tabBarIcon: ({ focused }) => <TabIcon emoji="🔬" label="Diseases" focused={focused} /> }} />
+        options={{ tabBarIcon: ({ focused }) => <TabIcon Icon={Microscope} label="Diseases" focused={focused} /> }} />
       <Tab.Screen name="Profile" component={ProfileScreen}
-        options={{ tabBarIcon: ({ focused }) => <TabIcon emoji="👤" label="Profile" focused={focused} /> }} />
+        options={{ tabBarIcon: ({ focused }) => <TabIcon Icon={User} label="Profile" focused={focused} /> }} />
     </Tab.Navigator>
   );
 }
@@ -172,7 +161,7 @@ export default function AppNavigator() {
         <View style={{ width: 72, height: 72, borderRadius: 36, backgroundColor: Colors.primary, alignItems: 'center', justifyContent: 'center' }}>
           <Text style={{ fontSize: 32, color: '#FFFFFF' }}>✦</Text>
         </View>
-        <Text style={{ color: Colors.textPrimary, marginTop: 16, fontSize: 22, fontWeight: '800', letterSpacing: 1 }}>ORCare</Text>
+        <Text style={{ color: Colors.textPrimary, marginTop: 16, fontSize: 22, fontFamily: 'Inter_800ExtraBold', letterSpacing: 1 }}>ORCare</Text>
       </View>
     );
   }

@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { ArrowLeft } from 'lucide-react-native';
 import { RootStackParamList } from '../navigation/AppNavigator';
 import { Colors } from '../theme/colors';
 import { tipsList, tipCategories, getDailyTip, Tip } from '../data/tipData';
@@ -61,7 +62,7 @@ export default function DailyTipsScreen({ navigation }: Props) {
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity style={styles.backBtn} onPress={() => navigation.goBack()}>
-          <Text style={styles.backArrow}>←</Text>
+          <ArrowLeft size={20} color={Colors.primary} strokeWidth={2.5} />
         </TouchableOpacity>
         <View style={styles.headerText}>
           <Text style={styles.title}>Daily Tips</Text>

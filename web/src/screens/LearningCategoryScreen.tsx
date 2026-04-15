@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { ArrowLeft, PlayCircle } from 'lucide-react-native';
 import { RootStackParamList } from '../navigation/AppNavigator';
 import { Colors } from '../theme/colors';
 import { learningCategories } from '../data/learningData';
@@ -15,7 +16,7 @@ export default function LearningCategoryScreen({ navigation, route }: Props) {
     return (
       <View style={styles.container}>
         <TouchableOpacity style={styles.backBtn} onPress={() => navigation.goBack()}>
-          <Text style={styles.backArrow}>←</Text>
+          <ArrowLeft size={20} color={Colors.primary} strokeWidth={2.5} />
         </TouchableOpacity>
         <View style={styles.emptyState}>
           <Text style={styles.emptyEmoji}>📚</Text>
@@ -33,7 +34,7 @@ export default function LearningCategoryScreen({ navigation, route }: Props) {
           style={[styles.backBtn, { backgroundColor: category.color + '20' }]}
           onPress={() => navigation.goBack()}
         >
-          <Text style={[styles.backArrow, { color: category.color }]}>←</Text>
+          <ArrowLeft size={20} color={category.color} strokeWidth={2.5} />
         </TouchableOpacity>
 
         <View style={styles.heroContent}>
@@ -95,8 +96,9 @@ export default function LearningCategoryScreen({ navigation, route }: Props) {
                 <Text style={styles.metaEmoji}>🧠</Text>
                 <Text style={[styles.metaText, { color: Colors.primary }]}>{item.quiz.length} Quiz Q's</Text>
               </View>
-              <View style={styles.startBtn}>
-                <Text style={[styles.startBtnText, { color: category.color }]}>Start →</Text>
+              <View style={[styles.startBtn, { backgroundColor: category.bgColor }]}>
+                <PlayCircle size={14} color={category.color} strokeWidth={2} />
+                <Text style={[styles.startBtnText, { color: category.color }]}>Start</Text>
               </View>
             </View>
           </TouchableOpacity>
@@ -232,11 +234,13 @@ const styles = StyleSheet.create({
   metaText: { fontSize: 11, fontWeight: '700' },
 
   startBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
     marginLeft: 'auto' as any,
     paddingHorizontal: 12,
     paddingVertical: 5,
     borderRadius: 20,
-    backgroundColor: Colors.border,
   },
   startBtnText: { fontSize: 12, fontWeight: '800' },
 

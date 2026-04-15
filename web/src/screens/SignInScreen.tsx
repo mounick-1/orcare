@@ -4,6 +4,7 @@ import {
   ActivityIndicator, KeyboardAvoidingView, ScrollView, Alert,
 } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { Mail, Lock, Eye, EyeOff } from 'lucide-react-native';
 import { RootStackParamList } from '../navigation/AppNavigator';
 import { Colors } from '../theme/colors';
 import { useAuth } from '../context/AuthContext';
@@ -46,8 +47,8 @@ export default function SignInScreen({ navigation }: Props) {
         <View style={styles.hero}>
           <View style={styles.logoRing}>
             <View style={styles.logoBox}>
-            <Text style={styles.logoEmoji}>✦</Text>
-          </View>
+              <Text style={styles.logoText}>✦</Text>
+            </View>
           </View>
           <Text style={styles.appName}>ORCare</Text>
           <Text style={styles.heroSub}>Oral Health Companion</Text>
@@ -62,7 +63,7 @@ export default function SignInScreen({ navigation }: Props) {
             <View style={styles.inputGroup}>
               <Text style={styles.label}>Email Address</Text>
               <View style={[styles.inputWrap, focusedField === 'email' && styles.inputWrapFocused]}>
-                <Text style={styles.inputIcon}>📧</Text>
+                <Mail size={16} color={focusedField === 'email' ? Colors.primary : Colors.textMuted} strokeWidth={2} />
                 <TextInput
                   style={styles.input}
                   placeholder="you@example.com"
@@ -81,7 +82,7 @@ export default function SignInScreen({ navigation }: Props) {
             <View style={styles.inputGroup}>
               <Text style={styles.label}>Password</Text>
               <View style={[styles.inputWrap, focusedField === 'password' && styles.inputWrapFocused]}>
-                <Text style={styles.inputIcon}>🔒</Text>
+                <Lock size={16} color={focusedField === 'password' ? Colors.primary : Colors.textMuted} strokeWidth={2} />
                 <TextInput
                   style={[styles.input, { flex: 1 }]}
                   placeholder="Enter your password"
@@ -94,7 +95,10 @@ export default function SignInScreen({ navigation }: Props) {
                   onBlur={() => setFocusedField(null)}
                 />
                 <TouchableOpacity onPress={() => setShowPass(!showPass)} style={styles.eyeBtn}>
-                  <Text style={styles.eyeIcon}>{showPass ? '🙈' : '👁️'}</Text>
+                  {showPass
+                    ? <EyeOff size={18} color={Colors.textMuted} strokeWidth={2} />
+                    : <Eye size={18} color={Colors.textMuted} strokeWidth={2} />
+                  }
                 </TouchableOpacity>
               </View>
             </View>
@@ -144,7 +148,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     backgroundColor: Colors.background,
     padding: 24,
-    paddingTop: 56,
+    paddingTop: 64,
     paddingBottom: 32,
   },
 
@@ -156,9 +160,9 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.primaryLight,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 12,
-    borderWidth: 3,
-    borderColor: Colors.primary + '40',
+    marginBottom: 14,
+    borderWidth: 2,
+    borderColor: Colors.primary + '30',
   },
   logoBox: {
     width: 72,
@@ -168,13 +172,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  logoEmoji: { fontSize: 36, color: Colors.textInverse, fontWeight: '300' },
-  appName: { fontSize: 28, fontWeight: '900', color: Colors.primary, letterSpacing: -0.5 },
-  heroSub: { fontSize: 13, color: Colors.textMuted, marginTop: 2 },
+  logoText: { fontSize: 36, color: Colors.textInverse },
+  appName: { fontSize: 30, fontFamily: 'Inter_800ExtraBold', color: Colors.textPrimary, letterSpacing: -0.5 },
+  heroSub: { fontSize: 13, color: Colors.textMuted, marginTop: 4, fontFamily: 'Inter_400Regular' },
 
   card: {
     backgroundColor: Colors.surface,
-    borderRadius: 24,
+    borderRadius: 20,
     padding: 24,
     borderWidth: 1,
     borderColor: Colors.border,
@@ -185,62 +189,62 @@ const styles = StyleSheet.create({
     elevation: 4,
     marginBottom: 20,
   },
-  cardTitle: { fontSize: 22, fontWeight: '800', color: Colors.textPrimary, marginBottom: 4 },
-  cardSubtitle: { fontSize: 13, color: Colors.textSecondary, marginBottom: 24 },
+  cardTitle: { fontSize: 22, fontFamily: 'Inter_800ExtraBold', color: Colors.textPrimary, marginBottom: 4 },
+  cardSubtitle: { fontSize: 13, color: Colors.textSecondary, fontFamily: 'Inter_400Regular', marginBottom: 24 },
 
   form: { gap: 16 },
   inputGroup: { gap: 6 },
-  label: { fontSize: 13, fontWeight: '700', color: Colors.textPrimary, textTransform: 'uppercase', letterSpacing: 0.5 },
+  label: { fontSize: 12, fontFamily: 'Inter_600SemiBold', color: Colors.textPrimary, textTransform: 'uppercase', letterSpacing: 0.5 },
   inputWrap: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: Colors.background,
-    borderRadius: 14,
+    borderRadius: 12,
     borderWidth: 1.5,
     borderColor: Colors.border,
     paddingHorizontal: 14,
     gap: 10,
   },
-  inputWrapFocused: { borderColor: Colors.primary, backgroundColor: 'rgba(255,140,66,0.10)' },
-  inputIcon: { fontSize: 16 },
+  inputWrapFocused: { borderColor: Colors.primary, backgroundColor: Colors.primaryLight },
   input: {
     flex: 1,
-    paddingVertical: 14,
-    fontSize: 15,
+    paddingVertical: 13,
+    fontSize: 14,
     color: Colors.textPrimary,
+    fontFamily: 'Inter_400Regular',
   },
   eyeBtn: { padding: 4 },
-  eyeIcon: { fontSize: 18 },
 
   forgotLink: { alignSelf: 'flex-end', marginTop: -8 },
-  forgotText: { color: Colors.primary, fontSize: 13, fontWeight: '700' },
+  forgotText: { color: Colors.primary, fontSize: 13, fontFamily: 'Inter_600SemiBold' },
 
   loginBtn: {
     backgroundColor: Colors.primary,
-    borderRadius: 14,
-    padding: 16,
+    borderRadius: 12,
+    padding: 15,
     alignItems: 'center',
     marginTop: 4,
-    shadowColor: Colors.primary,
+    shadowColor: Colors.shadow,
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
+    shadowOpacity: 1,
+    shadowRadius: 12,
   },
   btnDisabled: { opacity: 0.7 },
-  loginBtnText: { color: Colors.textInverse, fontSize: 16, fontWeight: '800' },
+  loginBtnText: { color: Colors.textInverse, fontSize: 15, fontFamily: 'Inter_700Bold' },
 
   dividerRow: { flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 16 },
   divider: { flex: 1, height: 1, backgroundColor: Colors.border },
-  dividerText: { fontSize: 12, color: Colors.textMuted, fontWeight: '600' },
+  dividerText: { fontSize: 12, color: Colors.textMuted, fontFamily: 'Inter_500Medium' },
 
   signupBtn: {
-    borderWidth: 2,
-    borderColor: Colors.primary,
-    borderRadius: 14,
+    borderWidth: 1.5,
+    borderColor: Colors.border,
+    borderRadius: 12,
     padding: 14,
     alignItems: 'center',
+    backgroundColor: Colors.surface,
   },
-  signupBtnText: { color: Colors.primary, fontSize: 15, fontWeight: '700' },
+  signupBtnText: { color: Colors.textPrimary, fontSize: 14, fontFamily: 'Inter_600SemiBold' },
 
-  footer: { textAlign: 'center', color: Colors.textMuted, fontSize: 11, marginTop: 24 },
+  footer: { textAlign: 'center', color: Colors.textMuted, fontSize: 11, marginTop: 24, fontFamily: 'Inter_400Regular' },
 });

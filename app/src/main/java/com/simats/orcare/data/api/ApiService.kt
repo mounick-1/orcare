@@ -53,5 +53,5 @@ interface ApiService {
     suspend fun submitFeedback(@Body request: Map<String, String>): Response<Map<String, Any>>
 
     @POST("api/chat/ask")
-    suspend fun askChatbot(@Body request: Map<String, String>): Response<Map<String, Any>>
+    suspend fun askChatbot(@Body request: Map<String, @JvmSuppressWildcards Any>): Response<Map<String, Any>>
 }

@@ -3,6 +3,7 @@ import {
   View, Text, StyleSheet, TouchableOpacity, TextInput, Alert, ScrollView,
 } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { ArrowLeft } from 'lucide-react-native';
 import { RootStackParamList } from '../navigation/AppNavigator';
 import { Colors } from '../theme/colors';
 import { useAuth } from '../context/AuthContext';
@@ -82,7 +83,7 @@ export default function DeleteAccountScreen({ navigation }: Props) {
               else navigation.goBack();
             }}
           >
-            <Text style={styles.backArrow}>←</Text>
+            <ArrowLeft size={20} color={Colors.primary} strokeWidth={2.5} />
           </TouchableOpacity>
         )}
         <View style={styles.headerCenter}>

@@ -4,6 +4,7 @@ import {
   ScrollView, ActivityIndicator, Alert, KeyboardAvoidingView,
 } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { ArrowLeft, MessageCircle, User, Info, Send, ChevronUp, ChevronDown } from 'lucide-react-native';
 import { RootStackParamList } from '../navigation/AppNavigator';
 import { Colors } from '../theme/colors';
 import { useAuth } from '../context/AuthContext';
@@ -73,7 +74,7 @@ export default function HelpFeedbackScreen({ navigation }: Props) {
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity style={styles.backBtn} onPress={() => navigation.goBack()}>
-          <Text style={styles.backArrow}>←</Text>
+          <ArrowLeft size={20} color={Colors.primary} strokeWidth={2.5} />
         </TouchableOpacity>
         <View style={styles.headerText}>
           <Text style={styles.title}>Help & Feedback</Text>
@@ -90,7 +91,7 @@ export default function HelpFeedbackScreen({ navigation }: Props) {
         <View style={styles.hero}>
           <View style={styles.heroIconRing}>
             <View style={styles.heroIconBox}>
-              <Text style={styles.heroEmoji}>💬</Text>
+              <MessageCircle size={34} color={Colors.textInverse} strokeWidth={1.75} />
             </View>
           </View>
           <Text style={styles.heroTitle}>How can we help?</Text>
@@ -109,7 +110,9 @@ export default function HelpFeedbackScreen({ navigation }: Props) {
             >
               <View style={styles.faqRow}>
                 <Text style={styles.faqQ}>{faq.q}</Text>
-                <Text style={styles.faqChevron}>{expandedFaq === i ? '▲' : '▼'}</Text>
+                {expandedFaq === i
+                  ? <ChevronUp size={14} color={Colors.textMuted} strokeWidth={2} />
+                  : <ChevronDown size={14} color={Colors.textMuted} strokeWidth={2} />}
               </View>
               {expandedFaq === i && (
                 <Text style={styles.faqA}>{faq.a}</Text>
@@ -140,7 +143,7 @@ export default function HelpFeedbackScreen({ navigation }: Props) {
           {/* Sender info (read only) */}
           {user && (
             <View style={styles.senderBox}>
-              <Text style={styles.senderIcon}>👤</Text>
+              <User size={20} color={Colors.primary} strokeWidth={2} />
               <View>
                 <Text style={styles.senderName}>{user.name}</Text>
                 <Text style={styles.senderEmail}>{user.email}</Text>
@@ -176,14 +179,14 @@ export default function HelpFeedbackScreen({ navigation }: Props) {
             {loading ? (
               <ActivityIndicator color={Colors.textInverse} />
             ) : (
-              <Text style={styles.submitBtnText}>Send Feedback ✦</Text>
+              <><Send size={16} color={Colors.textInverse} strokeWidth={2} style={{ marginRight: 8 }} /><Text style={styles.submitBtnText}>Send Feedback</Text></>
             )}
           </TouchableOpacity>
         </View>
 
         {/* Contact note */}
         <View style={styles.noteBox}>
-          <Text style={styles.noteIcon}>ℹ️</Text>
+          <Info size={16} color={Colors.primary} strokeWidth={2} />
           <Text style={styles.noteText}>
             For urgent issues, responses are typically within 24–48 hours.
           </Text>
@@ -316,7 +319,7 @@ const styles = StyleSheet.create({
     borderColor: Colors.border,
     padding: 12,
   },
-  textAreaFocused: { borderColor: Colors.primary, backgroundColor: 'rgba(255,140,66,0.08)' },
+  textAreaFocused: { borderColor: Colors.primary, backgroundColor: 'rgba(37,99,235,0.06)' },
   textArea: {
     fontSize: 14,
     color: Colors.textPrimary,
@@ -325,10 +328,12 @@ const styles = StyleSheet.create({
   charCount: { fontSize: 11, color: Colors.textMuted, textAlign: 'right' },
 
   submitBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
     backgroundColor: Colors.primary,
     borderRadius: 14,
     padding: 16,
-    alignItems: 'center',
     shadowColor: Colors.primary,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,

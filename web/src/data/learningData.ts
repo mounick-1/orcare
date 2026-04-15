@@ -112,8 +112,8 @@ export const learningCategories: LearningCategory[] = [
     id: 'prevention_tools',
     title: 'Prevention & Tools',
     icon: '🛡️',
-    color: '#4ADE80',
-    bgColor: '#4ADE801A',
+    color: '#22C55E',
+    bgColor: '#22C55E1A',
     description: 'Build a comprehensive oral health toolkit',
     modules: [
       {
@@ -268,8 +268,8 @@ export const learningCategories: LearningCategory[] = [
     id: 'specialized_care',
     title: 'Specialized Care',
     icon: '🏥',
-    color: '#FFB347',
-    bgColor: '#FFB3471A',
+    color: '#F59E0B',
+    bgColor: '#F59E0B1A',
     description: 'Tailored oral care for specific needs',
     modules: [
       {

@@ -99,10 +99,7 @@ export async function submitFeedback(name: string, email: string, message: strin
   return res.data;
 }
 
-// --- Gemini Chatbot ---
-const GEMINI_API_KEY = process.env.EXPO_PUBLIC_GEMINI_API_KEY ?? '';
-const GEMINI_URL =
-  'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent';
+// --- Chatbot (proxied through backend) ---
 
 export interface ChatTurn {
   role: 'user' | 'model';
@@ -113,38 +110,6 @@ export async function sendGeminiMessage(
   history: ChatTurn[],
   newMessage: string
 ): Promise<string> {
-  const key = GEMINI_API_KEY;
-  if (!key) {
-    return 'Chatbot is not configured. Please add EXPO_PUBLIC_GEMINI_API_KEY to web/.env and restart.';
-  }
-
-  const systemPrompt =
-    "You are ORCare AI, a friendly and knowledgeable oral health assistant. Your purpose is to provide helpful, accurate information about oral health, dental hygiene, and common dental conditions. Keep responses concise, warm, and easy to understand. Always recommend seeing a dentist for diagnosis and treatment. Do not provide medical diagnoses.";
-
-  const contents: ChatTurn[] = [
-    { role: 'user', parts: [{ text: systemPrompt }] },
-    { role: 'model', parts: [{ text: "Hello! I'm ORCare AI, your friendly oral health assistant. How can I help you today?" }] },
-    ...history,
-    { role: 'user', parts: [{ text: newMessage }] },
-  ];
-
-  const response = await fetch(`${GEMINI_URL}?key=${key}`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      contents,
-      generationConfig: {
-        temperature: 0.75,
-        maxOutputTokens: 900,
-      },
-    }),
-  });
-
-  if (!response.ok) {
-    const err = await response.text();
-    throw new Error(`Gemini API error: ${err}`);
-  }
-
-  const data = await response.json();
-  return data?.candidates?.[0]?.content?.parts?.[0]?.text ?? 'Sorry, I could not generate a response.';
+  const res = await api.post('/api/chat/chat', { message: newMessage, history });
+  return res.data.text;
 }

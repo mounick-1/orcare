@@ -2,11 +2,25 @@ import React from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import {
+  Droplets, AlertTriangle, Wind, Microscope, Zap, Flame,
+  Wand2, ChevronRight,
+} from 'lucide-react-native';
 import { Colors } from '../theme/colors';
-import { diseases } from '../data/diseaseData';
+import { diseases, Disease } from '../data/diseaseData';
 import { RootStackParamList } from '../navigation/AppNavigator';
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
+
+// Maps Android's Material icon choices → Lucide equivalents
+const DiseaseIcon: Record<string, React.ComponentType<{ size: number; color: string; strokeWidth: number }>> = {
+  gingivitis:    Droplets,
+  cavities:      AlertTriangle,
+  bad_breath:    Wind,
+  oral_cancer:   Microscope,
+  sensitivity:   Zap,
+  mouth_ulcers:  Flame,
+};
 
 export default function OralDiseaseScreen() {
   const navigation = useNavigation<Nav>();
@@ -20,7 +34,7 @@ export default function OralDiseaseScreen() {
           <Text style={styles.subtitle}>{diseases.length} conditions documented</Text>
         </View>
         <View style={styles.headerBadge}>
-          <Text style={{ fontSize: 24 }}>🔬</Text>
+          <Wand2 size={22} color={Colors.primary} strokeWidth={2} />
         </View>
       </View>
 
@@ -30,10 +44,9 @@ export default function OralDiseaseScreen() {
         contentContainerStyle={styles.list}
         showsVerticalScrollIndicator={false}
         ListHeaderComponent={
-          /* Info Banner */
           <View style={styles.banner}>
             <View style={styles.bannerIcon}>
-              <Text style={{ fontSize: 26 }}>⚠️</Text>
+              <AlertTriangle size={24} color={Colors.amber} strokeWidth={2} />
             </View>
             <View style={styles.bannerText}>
               <Text style={styles.bannerTitle}>Early Detection Saves Teeth</Text>
@@ -41,40 +54,40 @@ export default function OralDiseaseScreen() {
             </View>
           </View>
         }
-        renderItem={({ item }) => (
-          <TouchableOpacity
-            style={[styles.card, { borderLeftColor: item.color }]}
-            onPress={() => navigation.navigate('DiseaseDetail', { diseaseId: item.id })}
-            activeOpacity={0.85}
-          >
-            {/* Top row: icon + name + arrow */}
-            <View style={styles.cardTop}>
-              <View style={[styles.iconBox, { backgroundColor: item.bgColor }]}>
-                <Text style={styles.icon}>{item.icon}</Text>
-              </View>
-              <View style={styles.cardTitle}>
-                <Text style={[styles.diseaseName, { color: item.color }]}>{item.name}</Text>
-                <View style={[styles.tagRow]}>
-                  <View style={[styles.tag, { backgroundColor: item.bgColor }]}>
-                    <View style={[styles.tagDot, { backgroundColor: item.color }]} />
-                    <Text style={[styles.tagText, { color: item.color }]}>Oral Condition</Text>
+        renderItem={({ item }: { item: Disease }) => {
+          const Icon = DiseaseIcon[item.id] ?? Sparkles;
+          return (
+            <TouchableOpacity
+              style={[styles.card, { borderLeftColor: item.color }]}
+              onPress={() => navigation.navigate('DiseaseDetail', { diseaseId: item.id })}
+              activeOpacity={0.85}
+            >
+              <View style={styles.cardTop}>
+                <View style={[styles.iconBox, { backgroundColor: item.bgColor }]}>
+                  <Icon size={28} color={item.color} strokeWidth={1.75} />
+                </View>
+                <View style={styles.cardTitle}>
+                  <Text style={[styles.diseaseName, { color: item.color }]}>{item.name}</Text>
+                  <View style={styles.tagRow}>
+                    <View style={[styles.tag, { backgroundColor: item.bgColor }]}>
+                      <View style={[styles.tagDot, { backgroundColor: item.color }]} />
+                      <Text style={[styles.tagText, { color: item.color }]}>Oral Condition</Text>
+                    </View>
                   </View>
                 </View>
+                <View style={[styles.arrowBox, { backgroundColor: item.bgColor }]}>
+                  <ChevronRight size={18} color={item.color} strokeWidth={2.5} />
+                </View>
               </View>
-              <View style={[styles.arrowBox, { backgroundColor: item.bgColor }]}>
-                <Text style={[styles.arrow, { color: item.color }]}>›</Text>
+
+              <Text style={styles.preview} numberOfLines={2}>{item.whatIsHappening}</Text>
+
+              <View style={[styles.cardFooter, { borderTopColor: item.color + '20' }]}>
+                <Text style={[styles.footerCTA, { color: item.color }]}>View Details →</Text>
               </View>
-            </View>
-
-            {/* Preview text */}
-            <Text style={styles.preview} numberOfLines={2}>{item.whatIsHappening}</Text>
-
-            {/* Footer */}
-            <View style={[styles.cardFooter, { borderTopColor: item.color + '20' }]}>
-              <Text style={[styles.footerCTA, { color: item.color }]}>View Details →</Text>
-            </View>
-          </TouchableOpacity>
-        )}
+            </TouchableOpacity>
+          );
+        }}
         ListFooterComponent={<View style={{ height: 24 }} />}
       />
     </View>
@@ -95,8 +108,8 @@ const styles = StyleSheet.create({
     borderBottomColor: Colors.border,
   },
   headerLeft: { gap: 2 },
-  title: { fontSize: 22, fontWeight: '800', color: Colors.textPrimary },
-  subtitle: { fontSize: 12, color: Colors.textSecondary, marginTop: 2 },
+  title: { fontSize: 22, fontFamily: 'Inter_800ExtraBold', color: Colors.textPrimary },
+  subtitle: { fontSize: 12, color: Colors.textSecondary, marginTop: 2, fontFamily: 'Inter_400Regular' },
   headerBadge: {
     width: 48,
     height: 48,
@@ -127,8 +140,8 @@ const styles = StyleSheet.create({
     flexShrink: 0,
   },
   bannerText: { flex: 1, gap: 3 },
-  bannerTitle: { fontSize: 14, fontWeight: '800', color: Colors.amber },
-  bannerSub: { fontSize: 12, color: Colors.textSecondary, lineHeight: 18 },
+  bannerTitle: { fontSize: 14, fontFamily: 'Inter_700Bold', color: Colors.amber },
+  bannerSub: { fontSize: 12, color: Colors.textSecondary, lineHeight: 18, fontFamily: 'Inter_400Regular' },
 
   list: { padding: 16, gap: 14 },
 
@@ -160,10 +173,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     flexShrink: 0,
   },
-  icon: { fontSize: 30 },
 
   cardTitle: { flex: 1, gap: 6 },
-  diseaseName: { fontSize: 17, fontWeight: '800', lineHeight: 22 },
+  diseaseName: { fontSize: 17, fontFamily: 'Inter_800ExtraBold', lineHeight: 22 },
   tagRow: { flexDirection: 'row' },
   tag: {
     flexDirection: 'row',
@@ -175,7 +187,7 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
   },
   tagDot: { width: 5, height: 5, borderRadius: 2.5 },
-  tagText: { fontSize: 10, fontWeight: '700' },
+  tagText: { fontSize: 10, fontFamily: 'Inter_700Bold' },
 
   arrowBox: {
     width: 36,
@@ -185,7 +197,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     flexShrink: 0,
   },
-  arrow: { fontSize: 22, fontWeight: '700', lineHeight: 26 },
 
   preview: {
     fontSize: 13,
@@ -193,6 +204,7 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     paddingHorizontal: 16,
     paddingBottom: 12,
+    fontFamily: 'Inter_400Regular',
   },
 
   cardFooter: {
@@ -200,5 +212,5 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 10,
   },
-  footerCTA: { fontSize: 12, fontWeight: '700' },
+  footerCTA: { fontSize: 12, fontFamily: 'Inter_700Bold' },
 });

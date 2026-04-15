@@ -4,6 +4,7 @@ import {
   ScrollView, ActivityIndicator, Alert,
 } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { ArrowLeft, User, Mail, Lock, MapPin, Map, Globe, Check } from 'lucide-react-native';
 import { RootStackParamList } from '../navigation/AppNavigator';
 import { Colors } from '../theme/colors';
 import { useAuth } from '../context/AuthContext';
@@ -46,7 +47,7 @@ export default function EditProfileScreen({ navigation }: Props) {
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity style={styles.backBtn} onPress={() => navigation.goBack()}>
-          <Text style={styles.backArrow}>←</Text>
+          <ArrowLeft size={20} color={Colors.primary} strokeWidth={2.5} />
         </TouchableOpacity>
         <View style={styles.headerText}>
           <Text style={styles.title}>Edit Profile</Text>
@@ -77,7 +78,7 @@ export default function EditProfileScreen({ navigation }: Props) {
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Full Name *</Text>
             <View style={[styles.inputWrap, focused('name') && styles.inputWrapFocused]}>
-              <Text style={styles.inputIcon}>👤</Text>
+              <User size={16} color={Colors.textMuted} strokeWidth={1.75} />
               <TextInput
                 style={styles.input}
                 value={name}
@@ -93,14 +94,14 @@ export default function EditProfileScreen({ navigation }: Props) {
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Email Address</Text>
             <View style={[styles.inputWrap, styles.inputWrapDisabled]}>
-              <Text style={styles.inputIcon}>📧</Text>
+              <Mail size={16} color={Colors.textMuted} strokeWidth={1.75} />
               <TextInput
                 style={[styles.input, styles.inputDisabled]}
                 value={user?.email ?? ''}
                 editable={false}
                 placeholderTextColor={Colors.textMuted}
               />
-              <Text style={styles.lockIcon}>🔒</Text>
+              <Lock size={14} color={Colors.textMuted} strokeWidth={2} />
             </View>
             <Text style={styles.hint}>Email address cannot be changed</Text>
           </View>
@@ -113,7 +114,7 @@ export default function EditProfileScreen({ navigation }: Props) {
           <View style={styles.inputGroup}>
             <Text style={styles.label}>District</Text>
             <View style={[styles.inputWrap, focused('district') && styles.inputWrapFocused]}>
-              <Text style={styles.inputIcon}>🏙️</Text>
+              <MapPin size={16} color={Colors.textMuted} strokeWidth={1.75} />
               <TextInput
                 style={styles.input}
                 value={district}
@@ -129,7 +130,7 @@ export default function EditProfileScreen({ navigation }: Props) {
           <View style={styles.inputGroup}>
             <Text style={styles.label}>State</Text>
             <View style={[styles.inputWrap, focused('state') && styles.inputWrapFocused]}>
-              <Text style={styles.inputIcon}>🗺️</Text>
+              <Map size={16} color={Colors.textMuted} strokeWidth={1.75} />
               <TextInput
                 style={styles.input}
                 value={state}
@@ -153,9 +154,9 @@ export default function EditProfileScreen({ navigation }: Props) {
                 style={[styles.chip, lang === l && styles.chipActive]}
                 onPress={() => setLang(l)}
               >
-                <Text style={styles.chipEmoji}>🌐</Text>
+                <Globe size={14} color={lang === l ? Colors.primary : Colors.textMuted} strokeWidth={1.75} />
                 <Text style={[styles.chipText, lang === l && styles.chipTextActive]}>{l}</Text>
-                {lang === l && <Text style={styles.chipCheck}>✓</Text>}
+                {lang === l && <Check size={12} color={Colors.primary} strokeWidth={3} />}
               </TouchableOpacity>
             ))}
           </View>
@@ -262,7 +263,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     gap: 8,
   },
-  inputWrapFocused: { borderColor: Colors.primary, backgroundColor: 'rgba(255,140,66,0.10)' },
+  inputWrapFocused: { borderColor: Colors.primary, backgroundColor: 'rgba(37,99,235,0.08)' },
   inputWrapDisabled: { backgroundColor: Colors.surfaceElevated },
   inputIcon: { fontSize: 16 },
   input: { flex: 1, paddingVertical: 12, fontSize: 14, color: Colors.textPrimary },

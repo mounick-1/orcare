@@ -16,8 +16,8 @@ export const diseases: Disease[] = [
     id: 'gingivitis',
     name: 'Gingivitis',
     icon: '🩸',
-    color: '#4ADE80',
-    bgColor: '#4ADE801A',
+    color: '#22C55E',
+    bgColor: '#22C55E1A',
     whatIsHappening:
       'Gingivitis is the earliest and only truly reversible stage of gum disease. It occurs when a sticky, colorless film of bacteria called plaque accumulates on the teeth and produces toxins that irritate the gum tissue. If not removed by daily brushing and flossing, plaque hardens into tartar (calculus), which provides a shield for more bacteria and can only be removed by a professional dental cleaning.',
     whatPeopleNotice:
@@ -50,8 +50,8 @@ export const diseases: Disease[] = [
     id: 'bad_breath',
     name: 'Bad Breath (Halitosis)',
     icon: '💨',
-    color: '#4ADE80',
-    bgColor: '#4ADE801A',
+    color: '#22C55E',
+    bgColor: '#22C55E1A',
     whatIsHappening:
       'Chronic bad breath is typically caused by the breakdown of proteins by anaerobic bacteria in the mouth. These bacteria live in areas where oxygen is low, such as the deep crevices of the tongue, under the gumline, and between teeth, producing foul-smelling volatile sulfur compounds (VSCs).',
     whatPeopleNotice:
@@ -84,8 +84,8 @@ export const diseases: Disease[] = [
     id: 'sensitivity',
     name: 'Tooth Sensitivity',
     icon: '⚡',
-    color: '#4ADE80',
-    bgColor: '#4ADE801A',
+    color: '#22C55E',
+    bgColor: '#22C55E1A',
     whatIsHappening:
       "This occurs when the protective enamel on the tooth's crown or the cementum on the tooth's root wears away, exposing the 'dentin'. Dentin contains thousands of microscopic tubules that lead directly to the tooth's nerve center. When these tubules are exposed, external triggers travel straight to the nerve.",
     whatPeopleNotice:

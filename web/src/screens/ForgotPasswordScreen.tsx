@@ -4,6 +4,7 @@ import {
   ActivityIndicator, Alert, KeyboardAvoidingView, ScrollView,
 } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { ArrowLeft, Lock, Mail, Info } from 'lucide-react-native';
 import { RootStackParamList } from '../navigation/AppNavigator';
 import { Colors } from '../theme/colors';
 import { useAuth } from '../context/AuthContext';
@@ -51,14 +52,14 @@ export default function ForgotPasswordScreen({ navigation }: Props) {
       >
         {/* Back */}
         <TouchableOpacity style={styles.backBtn} onPress={() => navigation.goBack()}>
-          <Text style={styles.backArrow}>←</Text>
+          <ArrowLeft size={20} color={Colors.primary} strokeWidth={2.5} />
         </TouchableOpacity>
 
         {/* Hero */}
         <View style={styles.hero}>
           <View style={styles.iconRing}>
             <View style={styles.iconBox}>
-              <Text style={styles.iconEmoji}>🔑</Text>
+              <Lock size={40} color={Colors.textInverse} strokeWidth={1.75} />
             </View>
           </View>
           <Text style={styles.title}>Forgot Password?</Text>
@@ -72,7 +73,7 @@ export default function ForgotPasswordScreen({ navigation }: Props) {
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Email Address</Text>
             <View style={[styles.inputWrap, focused && styles.inputWrapFocused]}>
-              <Text style={styles.inputIcon}>📧</Text>
+              <Mail size={16} color={Colors.textMuted} strokeWidth={1.75} />
               <TextInput
                 style={styles.input}
                 placeholder="you@example.com"
@@ -100,7 +101,7 @@ export default function ForgotPasswordScreen({ navigation }: Props) {
           </TouchableOpacity>
 
           <View style={styles.infoBox}>
-            <Text style={styles.infoIcon}>💡</Text>
+            <Info size={16} color={Colors.primary} strokeWidth={2} />
             <Text style={styles.infoText}>
               Check your spam folder if you don't see the email within a few minutes.
             </Text>
@@ -194,7 +195,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     gap: 10,
   },
-  inputWrapFocused: { borderColor: Colors.primary, backgroundColor: 'rgba(255,140,66,0.10)' },
+  inputWrapFocused: { borderColor: Colors.primary, backgroundColor: 'rgba(37,99,235,0.08)' },
   inputIcon: { fontSize: 16 },
   input: {
     flex: 1,

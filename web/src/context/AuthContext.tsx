@@ -45,8 +45,8 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>({ _id: 'guest', name: 'Guest', email: '' });
-  const [token, setToken] = useState<string | null>('guest');
+  const [user, setUser] = useState<User | null>(null);
+  const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [language, setLang] = useState('English');
 
@@ -94,7 +94,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       await saveSession(data.token, data.user);
       setLoginState({ status: 'success', message: 'Login successful' });
     } catch (e: any) {
-      setLoginState({ status: 'error', message: e?.response?.data?.message ?? 'Login failed' });
+      setLoginState({ status: 'error', message: e?.response?.data?.message ?? 'Login failed. Check your credentials.' });
     }
   }
 
@@ -102,9 +102,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setRegisterState({ status: 'loading', message: '' });
     try {
       await apiService.register(name, email, password, age, gender, lang);
-      setRegisterState({ status: 'success', message: 'Registration successful! Please verify your email.' });
+      setRegisterState({ status: 'success', message: 'Account created! Please verify your email.' });
     } catch (e: any) {
-      setRegisterState({ status: 'error', message: e?.response?.data?.message ?? 'Registration failed' });
+      setRegisterState({ status: 'error', message: e?.response?.data?.message ?? 'Registration failed.' });
     }
   }
 

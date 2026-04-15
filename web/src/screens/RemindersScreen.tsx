@@ -3,6 +3,7 @@ import {
   View, Text, StyleSheet, FlatList, TouchableOpacity, Switch, Alert, TextInput, Modal,
 } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { ArrowLeft } from 'lucide-react-native';
 import { RootStackParamList } from '../navigation/AppNavigator';
 import { Colors } from '../theme/colors';
 import { Reminder, defaultReminders } from '../data/reminderData';
@@ -12,8 +13,8 @@ type Props = NativeStackScreenProps<RootStackParamList, 'Reminders'>;
 type TimePeriod = 'morning' | 'afternoon' | 'evening';
 
 const periodInfo: Record<TimePeriod, { label: string; icon: string; subLabel: string; color: string; bgColor: string }> = {
-  morning: { label: 'Morning Routine', icon: '🌅', subLabel: '5 AM – 12 PM', color: '#FFB347', bgColor: '#FFB3471A' },
-  afternoon: { label: 'Afternoon Care', icon: '☀️', subLabel: '12 PM – 6 PM', color: '#4ADE80', bgColor: '#4ADE801A' },
+  morning: { label: 'Morning Routine', icon: '🌅', subLabel: '5 AM – 12 PM', color: '#F59E0B', bgColor: '#F59E0B1A' },
+  afternoon: { label: 'Afternoon Care', icon: '☀️', subLabel: '12 PM – 6 PM', color: '#22C55E', bgColor: '#22C55E1A' },
   evening: { label: 'Evening Routine', icon: '🌙', subLabel: '6 PM – 12 AM', color: '#8B5CF6', bgColor: '#8B5CF61A' },
 };
 
@@ -84,7 +85,7 @@ export default function RemindersScreen({ navigation }: Props) {
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity style={styles.backBtn} onPress={() => navigation.goBack()}>
-          <Text style={styles.backArrow}>←</Text>
+          <ArrowLeft size={20} color={Colors.primary} strokeWidth={2.5} />
         </TouchableOpacity>
         <View style={styles.headerText}>
           <Text style={styles.title}>Reminders</Text>

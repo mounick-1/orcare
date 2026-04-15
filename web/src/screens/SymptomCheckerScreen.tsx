@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, TextInput } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { ArrowLeft } from 'lucide-react-native';
 import { Colors } from '../theme/colors';
 import { symptomsList } from '../data/symptomData';
 import { RootStackParamList } from '../navigation/AppNavigator';
@@ -22,7 +23,7 @@ export default function SymptomCheckerScreen() {
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
-          <Text style={styles.backArrow}>←</Text>
+          <ArrowLeft size={20} color={Colors.primary} strokeWidth={2.5} />
         </TouchableOpacity>
         <View style={styles.headerText}>
           <Text style={styles.title}>Symptom Checker</Text>
@@ -148,7 +149,7 @@ const styles = StyleSheet.create({
   },
   searchRowFocused: {
     borderColor: Colors.primary,
-    backgroundColor: 'rgba(255,140,66,0.08)',
+    backgroundColor: 'rgba(37,99,235,0.06)',
   },
   searchIcon: { fontSize: 16 },
   searchInput: { flex: 1, fontSize: 14, color: Colors.textPrimary },

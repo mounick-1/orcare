@@ -12,7 +12,7 @@ export default function SplashScreen({ navigation }: Props) {
 
   useEffect(() => {
     const t = setTimeout(() => {
-      navigation.replace(token && token !== 'guest' ? 'MainTabs' : 'SignIn');
+      navigation.replace(token ? 'MainTabs' : 'SignIn');
     }, 2200);
     return () => clearTimeout(t);
   }, []);
@@ -24,7 +24,7 @@ export default function SplashScreen({ navigation }: Props) {
       <View style={styles.glowBottom} />
 
       <View style={styles.inner}>
-        {/* Gemini-style sparkle logo */}
+        {/* Nested ring logo */}
         <View style={styles.logoWrap}>
           <View style={styles.outerRing}>
             <View style={styles.middleRing}>
@@ -42,7 +42,6 @@ export default function SplashScreen({ navigation }: Props) {
         <Text style={styles.appName}>ORCare</Text>
         <Text style={styles.tagline}>Your Oral Health Companion</Text>
 
-        {/* Gemini badge */}
         <View style={styles.geminiBadge}>
           <Text style={styles.geminiStar}>✦</Text>
           <Text style={styles.geminiText}>Powered by Gemini AI</Text>
@@ -50,7 +49,6 @@ export default function SplashScreen({ navigation }: Props) {
       </View>
 
       <View style={styles.footer}>
-        {/* Loading dots */}
         <View style={styles.dots}>
           {[0, 1, 2].map((i) => (
             <View key={i} style={[styles.dot, i === 1 && styles.dotActive]} />
@@ -72,7 +70,6 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
 
-  // Ambient glow
   glowTop: {
     position: 'absolute',
     top: -100,
@@ -80,7 +77,7 @@ const styles = StyleSheet.create({
     width: 300,
     height: 300,
     borderRadius: 150,
-    backgroundColor: 'rgba(255,140,66,0.12)',
+    backgroundColor: 'rgba(37,99,235,0.10)',
     transform: [{ translateX: -150 }],
   },
   glowBottom: {
@@ -90,35 +87,31 @@ const styles = StyleSheet.create({
     width: 200,
     height: 200,
     borderRadius: 100,
-    backgroundColor: 'rgba(52,211,153,0.10)',
+    backgroundColor: 'rgba(34,197,94,0.08)',
   },
 
   inner: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 20 },
 
-  // Gemini-style nested ring logo
-  logoWrap: {
-    position: 'relative',
-    marginBottom: 8,
-  },
+  logoWrap: { position: 'relative', marginBottom: 8 },
   outerRing: {
     width: 136,
     height: 136,
     borderRadius: 68,
     borderWidth: 1,
-    borderColor: 'rgba(255,140,66,0.25)',
+    borderColor: 'rgba(37,99,235,0.20)',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'rgba(255,140,66,0.04)',
+    backgroundColor: 'rgba(37,99,235,0.04)',
   },
   middleRing: {
     width: 108,
     height: 108,
     borderRadius: 54,
     borderWidth: 1,
-    borderColor: 'rgba(255,140,66,0.4)',
+    borderColor: 'rgba(37,99,235,0.35)',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'rgba(255,140,66,0.08)',
+    backgroundColor: 'rgba(37,99,235,0.07)',
   },
   logoBox: {
     width: 80,
@@ -127,37 +120,27 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: Colors.primary,
+    shadowColor: Colors.shadow,
     shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.6,
+    shadowOpacity: 1,
     shadowRadius: 24,
     elevation: 16,
   },
-  logoStar: {
-    fontSize: 40,
-    color: Colors.textInverse,
-    fontWeight: '300',
-  },
+  logoStar: { fontSize: 40, color: Colors.textInverse },
 
-  // Floating sparkles
-  spark: {
-    position: 'absolute',
-    fontSize: 12,
-    color: Colors.primary,
-    opacity: 0.7,
-  },
+  spark: { position: 'absolute', fontSize: 12, color: Colors.primary, opacity: 0.6 },
 
   appName: {
     fontSize: 42,
-    fontWeight: '900',
+    fontFamily: 'Inter_800ExtraBold',
     color: Colors.textPrimary,
-    letterSpacing: 2,
+    letterSpacing: 1,
   },
   tagline: {
     fontSize: 14,
+    fontFamily: 'Inter_400Regular',
     color: Colors.textSecondary,
-    fontWeight: '400',
-    letterSpacing: 0.5,
+    letterSpacing: 0.3,
   },
 
   geminiBadge: {
@@ -169,25 +152,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 6,
     borderWidth: 1,
-    borderColor: Colors.primary + '40',
+    borderColor: Colors.primary + '30',
     marginTop: 4,
   },
   geminiStar: { fontSize: 12, color: Colors.primary },
-  geminiText: { fontSize: 12, color: Colors.primary, fontWeight: '600' },
+  geminiText: { fontSize: 12, color: Colors.primary, fontFamily: 'Inter_600SemiBold' },
 
   footer: { alignItems: 'center', gap: 12 },
   dots: { flexDirection: 'row', gap: 6 },
-  dot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: Colors.border,
-  },
-  dotActive: {
-    width: 24,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: Colors.primary,
-  },
-  version: { fontSize: 11, color: Colors.textMuted },
+  dot: { width: 6, height: 6, borderRadius: 3, backgroundColor: Colors.border },
+  dotActive: { width: 24, height: 6, borderRadius: 3, backgroundColor: Colors.primary },
+  version: { fontSize: 11, color: Colors.textMuted, fontFamily: 'Inter_400Regular' },
 });

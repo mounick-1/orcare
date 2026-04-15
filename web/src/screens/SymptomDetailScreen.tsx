@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { ArrowLeft } from 'lucide-react-native';
 import { RootStackParamList } from '../navigation/AppNavigator';
 import { Colors } from '../theme/colors';
 import { symptomDetailsMap, symptomsList } from '../data/symptomData';
@@ -16,7 +17,7 @@ export default function SymptomDetailScreen({ navigation, route }: Props) {
     return (
       <View style={styles.container}>
         <TouchableOpacity style={styles.backBtn} onPress={() => navigation.goBack()}>
-          <Text style={styles.backArrow}>←</Text>
+          <ArrowLeft size={20} color={Colors.primary} strokeWidth={2.5} />
         </TouchableOpacity>
         <View style={styles.emptyState}>
           <Text style={styles.emptyEmoji}>🔍</Text>
@@ -34,7 +35,7 @@ export default function SymptomDetailScreen({ navigation, route }: Props) {
       {/* Hero Header */}
       <View style={[styles.hero, { backgroundColor: bgColor }]}>
         <TouchableOpacity style={[styles.backBtn, { backgroundColor: accentColor + '20' }]} onPress={() => navigation.goBack()}>
-          <Text style={[styles.backArrow, { color: accentColor }]}>←</Text>
+          <ArrowLeft size={20} color={accentColor} strokeWidth={2.5} />
         </TouchableOpacity>
 
         <View style={styles.heroContent}>

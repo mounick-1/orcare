@@ -4,6 +4,7 @@ import {
   ActivityIndicator, KeyboardAvoidingView, ScrollView, Alert,
 } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { User, Mail, Hash, Lock, CheckCircle, Eye, EyeOff, ArrowLeft } from 'lucide-react-native';
 import { RootStackParamList } from '../navigation/AppNavigator';
 import { Colors } from '../theme/colors';
 import { useAuth } from '../context/AuthContext';
@@ -29,7 +30,10 @@ export default function SignUpScreen({ navigation }: Props) {
   useEffect(() => {
     if (registerState.status === 'success') {
       resetStates();
-      navigation.navigate('OtpVerification', { email: email.trim().toLowerCase(), type: 'register' });
+      navigation.replace('OtpVerification', {
+        email: email.trim().toLowerCase(),
+        type: 'register',
+      });
     } else if (registerState.status === 'error') {
       Alert.alert('Registration Failed', registerState.message);
       resetStates();
@@ -64,7 +68,7 @@ export default function SignUpScreen({ navigation }: Props) {
         {/* Header */}
         <View style={styles.pageHeader}>
           <TouchableOpacity style={styles.backBtn} onPress={() => navigation.goBack()}>
-            <Text style={styles.backArrow}>←</Text>
+            <ArrowLeft size={18} color={Colors.primary} strokeWidth={2.5} />
           </TouchableOpacity>
           <View>
             <Text style={styles.pageTitle}>Create Account</Text>
@@ -83,7 +87,7 @@ export default function SignUpScreen({ navigation }: Props) {
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Full Name</Text>
             <View style={[styles.inputWrap, focused('name') && styles.inputWrapFocused]}>
-              <Text style={styles.inputIcon}>👤</Text>
+              <User size={15} color={focused('name') ? Colors.primary : Colors.textMuted} strokeWidth={2} />
               <TextInput
                 style={styles.input}
                 placeholder="John Doe"
@@ -100,7 +104,7 @@ export default function SignUpScreen({ navigation }: Props) {
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Email Address</Text>
             <View style={[styles.inputWrap, focused('email') && styles.inputWrapFocused]}>
-              <Text style={styles.inputIcon}>📧</Text>
+              <Mail size={15} color={focused('email') ? Colors.primary : Colors.textMuted} strokeWidth={2} />
               <TextInput
                 style={styles.input}
                 placeholder="you@example.com"
@@ -120,7 +124,7 @@ export default function SignUpScreen({ navigation }: Props) {
             <View style={[styles.inputGroup, { flex: 1 }]}>
               <Text style={styles.label}>Age</Text>
               <View style={[styles.inputWrap, focused('age') && styles.inputWrapFocused]}>
-                <Text style={styles.inputIcon}>🎂</Text>
+                <Hash size={15} color={focused('age') ? Colors.primary : Colors.textMuted} strokeWidth={2} />
                 <TextInput
                   style={styles.input}
                   placeholder="25"
@@ -177,7 +181,7 @@ export default function SignUpScreen({ navigation }: Props) {
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Password</Text>
             <View style={[styles.inputWrap, focused('password') && styles.inputWrapFocused]}>
-              <Text style={styles.inputIcon}>🔒</Text>
+              <Lock size={15} color={focused('password') ? Colors.primary : Colors.textMuted} strokeWidth={2} />
               <TextInput
                 style={[styles.input, { flex: 1 }]}
                 placeholder="Minimum 6 characters"
@@ -189,7 +193,9 @@ export default function SignUpScreen({ navigation }: Props) {
                 onBlur={() => setFocusedField(null)}
               />
               <TouchableOpacity onPress={() => setShowPass(!showPass)} style={styles.eyeBtn}>
-                <Text style={styles.eyeIcon}>{showPass ? '🙈' : '👁️'}</Text>
+                {showPass
+                  ? <EyeOff size={16} color={Colors.textMuted} strokeWidth={2} />
+                  : <Eye size={16} color={Colors.textMuted} strokeWidth={2} />}
               </TouchableOpacity>
             </View>
           </View>
@@ -198,7 +204,7 @@ export default function SignUpScreen({ navigation }: Props) {
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Confirm Password</Text>
             <View style={[styles.inputWrap, focused('confirm') && styles.inputWrapFocused]}>
-              <Text style={styles.inputIcon}>✅</Text>
+              <CheckCircle size={15} color={focused('confirm') ? Colors.primary : Colors.textMuted} strokeWidth={2} />
               <TextInput
                 style={styles.input}
                 placeholder="Re-enter password"
@@ -251,7 +257,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     flexShrink: 0,
   },
-  backArrow: { fontSize: 18, color: Colors.primary, fontWeight: '700' },
   pageTitle: { fontSize: 22, fontWeight: '800', color: Colors.textPrimary },
   pageSubtitle: { fontSize: 13, color: Colors.textSecondary, marginTop: 2 },
 
@@ -295,7 +300,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     gap: 8,
   },
-  inputWrapFocused: { borderColor: Colors.primary, backgroundColor: 'rgba(255,140,66,0.10)' },
+  inputWrapFocused: { borderColor: Colors.primary, backgroundColor: 'rgba(37,99,235,0.08)' },
   inputIcon: { fontSize: 15 },
   input: { flex: 1, paddingVertical: 12, fontSize: 14, color: Colors.textPrimary },
   eyeBtn: { padding: 4 },

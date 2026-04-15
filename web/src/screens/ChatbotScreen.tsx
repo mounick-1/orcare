@@ -4,6 +4,7 @@ import {
   TouchableOpacity, KeyboardAvoidingView, ActivityIndicator,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { ArrowLeft, Wand2, Bot, Plus, Send } from 'lucide-react-native';
 import { Colors } from '../theme/colors';
 import { useChat } from '../context/ChatContext';
 
@@ -50,17 +51,17 @@ export default function ChatbotScreen({ navigation: navProp, route }: any) {
       <View style={styles.header}>
         {canGoBack ? (
           <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
-            <Text style={styles.backArrow}>←</Text>
+            <ArrowLeft size={20} color={Colors.primary} strokeWidth={2.5} />
           </TouchableOpacity>
         ) : (
           <View style={styles.headerLogo}>
-            <Text style={styles.headerLogoStar}>✦</Text>
+            <Wand2 size={20} color={Colors.textInverse} strokeWidth={2} />
           </View>
         )}
 
         <View style={styles.aiInfo}>
           <View style={styles.aiAvatarBox}>
-            <Text style={styles.aiAvatarStar}>✦</Text>
+            <Bot size={20} color={Colors.textInverse} strokeWidth={2} />
             <View style={styles.onlineDot} />
           </View>
           <View>
@@ -70,7 +71,8 @@ export default function ChatbotScreen({ navigation: navProp, route }: any) {
         </View>
 
         <TouchableOpacity style={styles.newChatBtn} onPress={startNewSession}>
-          <Text style={styles.newChatText}>+ New</Text>
+          <Plus size={14} color={Colors.primary} strokeWidth={2.5} />
+          <Text style={styles.newChatText}>New</Text>
         </TouchableOpacity>
       </View>
 
@@ -85,7 +87,7 @@ export default function ChatbotScreen({ navigation: navProp, route }: any) {
           <View style={[styles.bubbleRow, item.isFromUser && styles.bubbleRowUser]}>
             {!item.isFromUser && (
               <View style={styles.aiBubbleAvatar}>
-                <Text style={styles.aiBubbleAvatarStar}>✦</Text>
+                <Bot size={16} color={Colors.textInverse} strokeWidth={2} />
               </View>
             )}
             <View style={[styles.bubble, item.isFromUser ? styles.userBubble : styles.aiBubble]}>
@@ -102,7 +104,7 @@ export default function ChatbotScreen({ navigation: navProp, route }: any) {
           isTyping ? (
             <View style={styles.bubbleRow}>
               <View style={styles.aiBubbleAvatar}>
-                <Text style={styles.aiBubbleAvatarStar}>✦</Text>
+                <Bot size={16} color={Colors.textInverse} strokeWidth={2} />
               </View>
               <View style={[styles.bubble, styles.aiBubble, styles.typingBubble]}>
                 <ActivityIndicator size="small" color={Colors.primary} />
@@ -117,7 +119,7 @@ export default function ChatbotScreen({ navigation: navProp, route }: any) {
       {messages.length <= 1 && (
         <View style={styles.suggestions}>
           <View style={styles.suggestHeader}>
-            <Text style={styles.suggestStar}>✦</Text>
+            <Wand2 size={12} color={Colors.primary} strokeWidth={2} />
             <Text style={styles.suggestLabel}>Suggested questions</Text>
           </View>
           <View style={styles.chips}>
@@ -155,7 +157,7 @@ export default function ChatbotScreen({ navigation: navProp, route }: any) {
           onPress={handleSend}
           disabled={!input.trim() || isTyping}
         >
-          <Text style={styles.sendIcon}>✦</Text>
+          <Send size={18} color={(!input.trim() || isTyping) ? Colors.textMuted : Colors.textInverse} strokeWidth={2} />
         </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>
@@ -234,6 +236,9 @@ const styles = StyleSheet.create({
   aiStatus: { fontSize: 11, color: Colors.accent, fontWeight: '500' },
 
   newChatBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
     backgroundColor: Colors.primaryLight,
     borderRadius: 20,
     paddingHorizontal: 12,

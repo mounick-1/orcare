@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { Search, Bot, Bell, Lightbulb, GraduationCap, Stethoscope } from 'lucide-react-native';
 import { Colors } from '../theme/colors';
 import { useAuth } from '../context/AuthContext';
 import { getDailyTip } from '../data/tipData';
@@ -10,16 +11,22 @@ import { RootStackParamList } from '../navigation/AppNavigator';
 type Nav = NativeStackNavigationProp<RootStackParamList>;
 
 const quickActions = [
-  { emoji: '🔍', label: 'Symptom Checker', sub: 'Check your symptoms', route: 'SymptomChecker', bg: Colors.primaryLight, fg: Colors.primary },
-  { emoji: '🤖', label: 'AI Chatbot', sub: 'Ask ORCare AI', route: 'Chatbot', bg: Colors.secondaryLight, fg: Colors.secondary },
-  { emoji: '🔔', label: 'Reminders', sub: 'Daily hygiene alerts', route: 'Reminders', bg: Colors.amberLight, fg: Colors.amber },
-  { emoji: '💡', label: 'Daily Tips', sub: 'Oral health facts', route: 'DailyTips', bg: Colors.accentLight, fg: Colors.accent },
+  { Icon: Search, label: 'Symptom Checker', sub: 'Check your symptoms', route: 'SymptomChecker', bg: Colors.primaryLight, fg: Colors.primary },
+  { Icon: Bot, label: 'AI Chatbot', sub: 'Ask ORCare AI', route: 'Chatbot', bg: Colors.successLight, fg: Colors.success },
+  { Icon: Bell, label: 'Reminders', sub: 'Daily hygiene alerts', route: 'Reminders', bg: Colors.amberLight, fg: Colors.amber },
+  { Icon: Lightbulb, label: 'Daily Tips', sub: 'Oral health facts', route: 'DailyTips', bg: Colors.accentLight, fg: Colors.accent },
 ];
 
 const facts = [
   { emoji: '🦠', text: 'Your mouth has over 700 species of bacteria. Proper cleaning keeps harmful ones in check.' },
   { emoji: '⏱️', text: 'Brushing for just 2 minutes twice a day can prevent 80% of cavities.' },
   { emoji: '🧵', text: 'Flossing reaches 40% of tooth surfaces that a brush cannot clean.' },
+];
+
+const stats = [
+  { Icon: Bell, label: 'Reminders', value: '10', sub: 'Active', fg: Colors.primary },
+  { Icon: GraduationCap, label: 'Modules', value: '24', sub: 'Available', fg: Colors.success },
+  { Icon: Stethoscope, label: 'Diseases', value: '6', sub: 'In Database', fg: Colors.accent },
 ];
 
 export default function HomeScreen() {
@@ -65,14 +72,14 @@ export default function HomeScreen() {
         {quickActions.map((a) => (
           <TouchableOpacity
             key={a.label}
-            style={[styles.actionCard, { backgroundColor: a.bg }]}
+            style={[styles.actionCard, { borderColor: a.fg + '30' }]}
             onPress={() => navigation.navigate(a.route as any)}
             activeOpacity={0.8}
           >
-            <View style={[styles.actionIconBox, { backgroundColor: a.fg + '22' }]}>
-              <Text style={styles.actionEmoji}>{a.emoji}</Text>
+            <View style={[styles.actionIconBox, { backgroundColor: a.bg }]}>
+              <a.Icon size={22} color={a.fg} strokeWidth={2} />
             </View>
-            <Text style={[styles.actionLabel, { color: a.fg }]}>{a.label}</Text>
+            <Text style={[styles.actionLabel, { color: Colors.textPrimary }]}>{a.label}</Text>
             <Text style={styles.actionSub}>{a.sub}</Text>
           </TouchableOpacity>
         ))}
@@ -111,14 +118,12 @@ export default function HomeScreen() {
       {/* ── Stats Row ── */}
       <Text style={styles.sectionTitle}>Your Progress</Text>
       <View style={styles.statsRow}>
-        {[
-          { emoji: '🔔', label: 'Reminders', value: '10', sub: 'Active' },
-          { emoji: '📚', label: 'Modules', value: '24', sub: 'Available' },
-          { emoji: '🦷', label: 'Diseases', value: '6', sub: 'In Database' },
-        ].map((s) => (
+        {stats.map((s) => (
           <View key={s.label} style={styles.statCard}>
-            <Text style={styles.statEmoji}>{s.emoji}</Text>
-            <Text style={styles.statValue}>{s.value}</Text>
+            <View style={[styles.statIconBox, { backgroundColor: s.fg + '15' }]}>
+              <s.Icon size={18} color={s.fg} strokeWidth={2} />
+            </View>
+            <Text style={[styles.statValue, { color: s.fg }]}>{s.value}</Text>
             <Text style={styles.statLabel}>{s.label}</Text>
             <Text style={styles.statSub}>{s.sub}</Text>
           </View>
@@ -142,26 +147,28 @@ const styles = StyleSheet.create({
     paddingTop: 56,
     paddingBottom: 20,
     backgroundColor: Colors.surface,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.border,
   },
   headerLeft: { gap: 2 },
-  greeting: { fontSize: 13, color: Colors.textSecondary, fontWeight: '500' },
-  userName: { fontSize: 24, fontWeight: '800', color: Colors.textPrimary },
+  greeting: { fontSize: 13, color: Colors.textSecondary, fontFamily: 'Inter_500Medium' },
+  userName: { fontSize: 24, fontFamily: 'Inter_800ExtraBold', color: Colors.textPrimary, letterSpacing: -0.5 },
   avatarRing: {
-    width: 52,
-    height: 52,
-    borderRadius: 26,
+    width: 48,
+    height: 48,
+    borderRadius: 24,
     borderWidth: 2,
-    borderColor: Colors.primary + '60',
+    borderColor: Colors.primary + '40',
     padding: 2,
   },
   avatar: {
     flex: 1,
-    borderRadius: 22,
+    borderRadius: 20,
     backgroundColor: Colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  avatarText: { color: Colors.textInverse, fontSize: 18, fontWeight: '800' },
+  avatarText: { color: Colors.textInverse, fontSize: 16, fontFamily: 'Inter_700Bold' },
 
   scoreBanner: {
     flexDirection: 'row',
@@ -171,28 +178,28 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     marginTop: 20,
     borderRadius: 20,
-    padding: 20,
+    padding: 24,
   },
   scoreLeft: { gap: 4 },
-  scoreLabel: { fontSize: 12, color: 'rgba(255,255,255,0.7)', fontWeight: '600', textTransform: 'uppercase', letterSpacing: 0.5 },
-  scoreValue: { fontSize: 26, fontWeight: '800', color: Colors.textInverse },
-  scoreHint: { fontSize: 12, color: 'rgba(255,255,255,0.7)' },
+  scoreLabel: { fontSize: 11, color: 'rgba(255,255,255,0.75)', fontFamily: 'Inter_600SemiBold', textTransform: 'uppercase', letterSpacing: 0.8 },
+  scoreValue: { fontSize: 28, fontFamily: 'Inter_800ExtraBold', color: Colors.textInverse },
+  scoreHint: { fontSize: 12, color: 'rgba(255,255,255,0.7)', fontFamily: 'Inter_400Regular' },
   scoreCircle: {
-    width: 72,
-    height: 72,
-    borderRadius: 36,
+    width: 76,
+    height: 76,
+    borderRadius: 38,
     backgroundColor: 'rgba(255,255,255,0.15)',
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 2,
-    borderColor: 'rgba(255,255,255,0.3)',
+    borderColor: 'rgba(255,255,255,0.25)',
   },
   scoreEmoji: { fontSize: 20 },
-  scoreNum: { fontSize: 18, fontWeight: '800', color: Colors.textInverse },
+  scoreNum: { fontSize: 20, fontFamily: 'Inter_800ExtraBold', color: Colors.textInverse },
 
   sectionTitle: {
-    fontSize: 17,
-    fontWeight: '700',
+    fontSize: 16,
+    fontFamily: 'Inter_700Bold',
     color: Colors.textPrimary,
     paddingHorizontal: 20,
     marginTop: 24,
@@ -207,26 +214,32 @@ const styles = StyleSheet.create({
   },
   actionCard: {
     width: '47%',
-    borderRadius: 20,
+    borderRadius: 16,
     padding: 18,
     gap: 10,
+    backgroundColor: Colors.surface,
+    borderWidth: 1.5,
+    shadowColor: Colors.shadowNeutral,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 1,
+    shadowRadius: 4,
+    elevation: 2,
   },
   actionIconBox: {
     width: 44,
     height: 44,
-    borderRadius: 14,
+    borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  actionEmoji: { fontSize: 22 },
-  actionLabel: { fontSize: 14, fontWeight: '800' },
-  actionSub: { fontSize: 11, color: Colors.textSecondary, lineHeight: 16 },
+  actionLabel: { fontSize: 14, fontFamily: 'Inter_700Bold' },
+  actionSub: { fontSize: 11, color: Colors.textMuted, fontFamily: 'Inter_400Regular', lineHeight: 16 },
 
   tipCard: {
     backgroundColor: Colors.primary,
     marginHorizontal: 20,
     borderRadius: 20,
-    padding: 20,
+    padding: 22,
     gap: 10,
   },
   tipTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
@@ -236,10 +249,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 4,
   },
-  tipBadgeText: { color: Colors.textInverse, fontSize: 11, fontWeight: '700' },
+  tipBadgeText: { color: Colors.textInverse, fontSize: 11, fontFamily: 'Inter_700Bold' },
   tipEmoji: { fontSize: 28 },
-  tipTitle: { fontSize: 18, fontWeight: '800', color: Colors.textInverse },
-  tipDesc: { fontSize: 14, color: 'rgba(255,255,255,0.85)', lineHeight: 22 },
+  tipTitle: { fontSize: 18, fontFamily: 'Inter_800ExtraBold', color: Colors.textInverse },
+  tipDesc: { fontSize: 14, color: 'rgba(255,255,255,0.85)', lineHeight: 22, fontFamily: 'Inter_400Regular' },
   tipFooter: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 4 },
   tipCategoryPill: {
     backgroundColor: 'rgba(255,255,255,0.15)',
@@ -247,46 +260,53 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 4,
   },
-  tipCategoryText: { color: 'rgba(255,255,255,0.9)', fontSize: 11, fontWeight: '600' },
-  tipMore: { color: 'rgba(255,255,255,0.7)', fontSize: 13, fontWeight: '600' },
+  tipCategoryText: { color: 'rgba(255,255,255,0.9)', fontSize: 11, fontFamily: 'Inter_600SemiBold' },
+  tipMore: { color: 'rgba(255,255,255,0.75)', fontSize: 13, fontFamily: 'Inter_600SemiBold' },
 
   factCard: {
     flexDirection: 'row',
     backgroundColor: Colors.surface,
     marginHorizontal: 20,
-    borderRadius: 18,
+    borderRadius: 16,
     padding: 18,
     gap: 14,
     alignItems: 'flex-start',
     borderWidth: 1,
     borderColor: Colors.border,
     shadowColor: Colors.shadowNeutral,
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 1,
-    shadowRadius: 8,
+    shadowRadius: 4,
     elevation: 2,
   },
   factEmoji: { fontSize: 32 },
-  factText: { flex: 1, fontSize: 14, color: Colors.textSecondary, lineHeight: 22 },
+  factText: { flex: 1, fontSize: 14, color: Colors.textSecondary, lineHeight: 22, fontFamily: 'Inter_400Regular' },
 
   statsRow: { flexDirection: 'row', paddingHorizontal: 20, gap: 12 },
   statCard: {
     flex: 1,
     backgroundColor: Colors.surface,
-    borderRadius: 18,
+    borderRadius: 16,
     padding: 16,
     alignItems: 'center',
-    gap: 2,
+    gap: 4,
     borderWidth: 1,
     borderColor: Colors.border,
     shadowColor: Colors.shadowNeutral,
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 1,
-    shadowRadius: 8,
+    shadowRadius: 4,
     elevation: 2,
   },
-  statEmoji: { fontSize: 22, marginBottom: 4 },
-  statValue: { fontSize: 22, fontWeight: '800', color: Colors.primary },
-  statLabel: { fontSize: 11, fontWeight: '700', color: Colors.textPrimary },
-  statSub: { fontSize: 10, color: Colors.textMuted },
+  statIconBox: {
+    width: 36,
+    height: 36,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 4,
+  },
+  statValue: { fontSize: 22, fontFamily: 'Inter_800ExtraBold' },
+  statLabel: { fontSize: 11, fontFamily: 'Inter_700Bold', color: Colors.textPrimary },
+  statSub: { fontSize: 10, color: Colors.textMuted, fontFamily: 'Inter_400Regular' },
 });

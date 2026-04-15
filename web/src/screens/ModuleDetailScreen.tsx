@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { ArrowLeft } from 'lucide-react-native';
 import { RootStackParamList } from '../navigation/AppNavigator';
 import { Colors } from '../theme/colors';
 import { learningCategories } from '../data/learningData';
@@ -24,7 +25,7 @@ export default function ModuleDetailScreen({ navigation, route }: Props) {
     return (
       <View style={styles.container}>
         <TouchableOpacity style={styles.backBtn} onPress={() => navigation.goBack()}>
-          <Text style={styles.backArrow}>←</Text>
+          <ArrowLeft size={20} color={Colors.primary} strokeWidth={2.5} />
         </TouchableOpacity>
         <View style={styles.emptyState}>
           <Text style={styles.emptyEmoji}>📖</Text>
@@ -128,7 +129,7 @@ export default function ModuleDetailScreen({ navigation, route }: Props) {
             style={[styles.backBtn, { backgroundColor: category.color + '20' }]}
             onPress={() => navigation.goBack()}
           >
-            <Text style={[styles.backArrow, { color: category.color }]}>←</Text>
+            <ArrowLeft size={20} color={category.color} strokeWidth={2.5} />
           </TouchableOpacity>
 
           <View style={styles.headerInfo}>
@@ -231,7 +232,7 @@ export default function ModuleDetailScreen({ navigation, route }: Props) {
           style={[styles.backBtn, { backgroundColor: category.color + '20' }]}
           onPress={() => navigation.goBack()}
         >
-          <Text style={[styles.backArrow, { color: category.color }]}>←</Text>
+          <ArrowLeft size={20} color={category.color} strokeWidth={2.5} />
         </TouchableOpacity>
 
         <View style={styles.headerInfo}>

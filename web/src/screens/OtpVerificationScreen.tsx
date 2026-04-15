@@ -4,6 +4,7 @@ import {
   ActivityIndicator, Alert,
 } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { ArrowLeft } from 'lucide-react-native';
 import { RootStackParamList } from '../navigation/AppNavigator';
 import { Colors } from '../theme/colors';
 import { useAuth } from '../context/AuthContext';
@@ -78,7 +79,7 @@ export default function OtpVerificationScreen({ navigation, route }: Props) {
     <View style={styles.container}>
       {/* Back */}
       <TouchableOpacity style={styles.backBtn} onPress={() => navigation.goBack()}>
-        <Text style={styles.backArrow}>←</Text>
+        <ArrowLeft size={20} color={Colors.primary} strokeWidth={2.5} />
       </TouchableOpacity>
 
       {/* Hero */}

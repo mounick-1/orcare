@@ -4,6 +4,7 @@ import {
   ActivityIndicator, Alert, KeyboardAvoidingView, ScrollView,
 } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { ArrowLeft, Lock, Info, Eye, EyeOff, CheckCircle } from 'lucide-react-native';
 import { RootStackParamList } from '../navigation/AppNavigator';
 import { Colors } from '../theme/colors';
 import { useAuth } from '../context/AuthContext';
@@ -57,14 +58,14 @@ export default function ResetPasswordScreen({ navigation, route }: Props) {
       >
         {/* Back */}
         <TouchableOpacity style={styles.backBtn} onPress={() => navigation.goBack()}>
-          <Text style={styles.backArrow}>←</Text>
+          <ArrowLeft size={20} color={Colors.primary} strokeWidth={2.5} />
         </TouchableOpacity>
 
         {/* Hero */}
         <View style={styles.hero}>
           <View style={styles.iconRing}>
             <View style={styles.iconBox}>
-              <Text style={styles.iconEmoji}>🔐</Text>
+              <Lock size={40} color={Colors.textInverse} strokeWidth={1.75} />
             </View>
           </View>
           <Text style={styles.title}>Create New Password</Text>
@@ -80,7 +81,7 @@ export default function ResetPasswordScreen({ navigation, route }: Props) {
         <View style={styles.card}>
           {/* Password strength hint */}
           <View style={styles.hintBox}>
-            <Text style={styles.hintIcon}>💡</Text>
+            <Info size={16} color={Colors.primary} strokeWidth={2} />
             <Text style={styles.hintText}>
               Use at least 6 characters with a mix of letters, numbers, and symbols.
             </Text>
@@ -90,7 +91,7 @@ export default function ResetPasswordScreen({ navigation, route }: Props) {
           <View style={styles.inputGroup}>
             <Text style={styles.label}>New Password</Text>
             <View style={[styles.inputWrap, focused('password') && styles.inputWrapFocused]}>
-              <Text style={styles.inputIcon}>🔒</Text>
+              <Lock size={16} color={Colors.textMuted} strokeWidth={1.75} />
               <TextInput
                 style={[styles.input, { flex: 1 }]}
                 placeholder="Minimum 6 characters"
@@ -102,7 +103,7 @@ export default function ResetPasswordScreen({ navigation, route }: Props) {
                 onBlur={() => setFocusedField(null)}
               />
               <TouchableOpacity onPress={() => setShowPass(!showPass)} style={styles.eyeBtn}>
-                <Text style={styles.eyeIcon}>{showPass ? '🙈' : '👁️'}</Text>
+                {showPass ? <EyeOff size={18} color={Colors.textMuted} strokeWidth={2} /> : <Eye size={18} color={Colors.textMuted} strokeWidth={2} />}
               </TouchableOpacity>
             </View>
           </View>
@@ -111,7 +112,7 @@ export default function ResetPasswordScreen({ navigation, route }: Props) {
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Confirm New Password</Text>
             <View style={[styles.inputWrap, focused('confirm') && styles.inputWrapFocused]}>
-              <Text style={styles.inputIcon}>✅</Text>
+              <CheckCircle size={16} color={Colors.textMuted} strokeWidth={1.75} />
               <TextInput
                 style={styles.input}
                 placeholder="Re-enter new password"
@@ -244,7 +245,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     gap: 10,
   },
-  inputWrapFocused: { borderColor: Colors.primary, backgroundColor: 'rgba(255,140,66,0.10)' },
+  inputWrapFocused: { borderColor: Colors.primary, backgroundColor: 'rgba(37,99,235,0.08)' },
   inputIcon: { fontSize: 16 },
   input: { flex: 1, paddingVertical: 14, fontSize: 15, color: Colors.textPrimary },
   eyeBtn: { padding: 4 },
